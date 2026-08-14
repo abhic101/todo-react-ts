@@ -1,0 +1,100 @@
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@keyframes fadeInZoomIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOutZoomOut {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.9); }
+}
+
+
+.overlay {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 150ms ease;
+    background-color: var(--overlay-bg-color);
+    inset: 0;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    z-index: 2;
+}
+
+.overlay-close {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeOut 300ms ease;
+    background-color: var(--overlay-bg-color);
+    inset: 0;
+    overflow-y: scroll;
+    scrollbar-width: none; 
+}
+
+.panel {
+    border-radius: 17px;
+    background: var(--dialog-bg-gradient);
+    box-shadow: var(--dialog-box-shadow);
+    backdrop-filter: blur(20px);
+    overflow-x: clip;
+    animation: fadeInZoomIn 300ms ease forwards;
+    outline: none;
+}
+
+.panel-close {
+    border-radius: 17px;
+    background: var(--dialog-bg-gradient);
+    box-shadow: var(--dialog-box-shadow);
+    backdrop-filter: blur(20px);
+    animation: fadeOutZoomOut 300ms ease forwards;
+    outline: none;
+}
+
+.close-button-container {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    text-align: right;
+    margin: 0;
+    z-index: 10;
+}
+
+.close-button-container > button {
+    background-color: transparent;
+    margin: 0;
+    padding: 0 15px;
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    
+    color: var(--dialog-input-bg-color);
+    font-family: var(--primary-font);
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.error-boundary-message {
+    color: rgb(255, 224, 88);
+    padding: 30px;
+    font-size: 24px;
+    font-weight: 600;
+    align-content: center;
+}
+
+.error-span {
+    font-size: 35px;
+}

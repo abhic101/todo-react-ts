@@ -1,0 +1,1 @@
+export type AvailableDialogs = 'login' | 'signup' | 'settings' | 'task-editor' | 'username-updator' | 'password-updator' | null;

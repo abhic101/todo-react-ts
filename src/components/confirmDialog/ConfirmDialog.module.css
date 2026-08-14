@@ -1,0 +1,98 @@
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.confirm-root {
+    width: 350px;
+    padding: 10px 40px 40px 40px;
+}
+.confirm-message {
+    margin-top: 30px;
+    margin-bottom: 30px;
+
+}
+
+.button-group {
+    display: flex;
+    margin-top: 40px;
+    justify-content:space-between;
+
+    button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 17px;
+        padding: 10px 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: linear-gradient(to bottom right,
+            rgba(253, 253, 253, 0.1) 10%,
+            rgba(3, 3, 3, 0.1) 80%
+        );
+        outline: none;
+        transition: all .3s;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+
+        span {
+            display: flex;
+            align-items: center;
+        }
+
+        .confirm-icon, .cancel-icon  {
+            margin-right: 8px;
+            transition: all .3s;
+        }
+    }
+
+    button:hover {
+        scale: 1.1;
+        color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+
+    }
+    button:active {
+        scale: 1;
+        box-shadow: none;
+        transition: all .1s;
+    }
+    button:disabled {
+        color: rgba(255, 255, 255, 0.5);
+        background: transparent;
+        box-shadow: none;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .confirm-button {
+        padding: 10px 20px;
+    }
+    .cancel-button {
+        padding: 10px 20px;
+    }
+
+
+}
+
+.loader {
+  --color-1: rgba(255, 255, 255, 0.5);
+  --size: .32px;
+  width: calc(48 * var(--size));
+  height: calc(48 * var(--size));
+  border: calc(8 * var(--size)) solid var(--color-1);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,99 @@
+@keyframes shake {
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.signup-root {
+    width: 400px;
+}
+
+.disabled {
+    position: relative;
+}
+
+.logo-container {
+    margin-bottom: 70px;
+}
+
+.disabled::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    cursor: not-allowed;
+}
+
+.signup-logo {
+    height: 45px;
+}
+
+.http-notif-container {
+    top: 100px;
+}
+
+.multiple-text-input-container {
+    border: none;
+    border-radius: 30px;
+}
+
+.password-input-label {
+    margin-top: 20px;
+}
+
+.text-input {
+    padding-right: 21px; 
+}
+
+.text-input-top,
+.text-input-top:focus,
+.text-input-bottom,
+.text-input-bottom:focus {
+    border: none;
+    box-shadow: none;
+}
+
+.text-input-top {
+    border-radius: 0px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    padding-bottom: 5px;
+}
+
+.text-input-bottom {
+    border-radius: 0;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    padding-top: 5px;
+}
+
+.multiple-text-input-container:has(.text-input:focus) {
+    box-shadow: var(--dialog-input-focus-shadow);
+}
+
+.goto-login-container {
+    text-align: right;
+    margin: 0;
+}
+
+.goto-login-label {
+    color: var(--white);
+    margin: 10px 5px 0 0;
+    font-size: 16px;
+}
+
+.goto-login-link {
+    cursor: pointer;
+    padding: 2px 0;
+    color: rgb(55, 175, 255);
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 300ms;
+}
+
+.goto-login-link:hover {
+    color: rgb(55, 175, 255);
+    border-bottom: 2px solid rgb(55, 175, 255);
+}

@@ -1,0 +1,63 @@
+.rte-root {
+    font-family: 'nunito';
+    font-size: 16px;
+    color: var(--white);
+    
+    padding: 0;
+    margin: 0;
+
+    outline: none;
+    border-radius:21px;
+    background-color: var(--dialog-input-bg-color);
+}
+
+.editor :global(.ProseMirror) {
+    min-height: calc(21.6px * 6);
+    max-height: calc(21.6px * 8);
+    overflow-y: scroll;
+    scrollbar-width: none;
+    padding: 0 25px;
+    margin: 0;
+    border: none;
+    border-radius: 21px;
+}
+.editor :global(.ProseMirror:focus) {
+    outline: none;
+    box-shadow: var(--dialog-input-focus-shadow);
+}
+
+:global(.ProseMirror p.is-editor-empty:first-child::before)  {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--dialog-input-placeholder-color);
+  pointer-events: none;
+  height: 0;
+}
+
+:global(.tiptap) {
+    :first-child {
+        padding-top: 20px;
+        margin: 0;
+    }
+
+    p {
+        margin: 0;
+        padding: 0;
+    }
+
+    ol, ul {
+        margin: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+
+        li {
+            margin: 0 !important;
+            padding: 0 !important;
+            p {
+                margin:0 !important;
+                padding: 0 !important;
+            }
+        }
+    }
+
+}

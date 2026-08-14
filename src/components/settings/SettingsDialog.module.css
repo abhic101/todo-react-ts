@@ -1,0 +1,220 @@
+@keyframes shake {
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.signup-root {
+    width: 500px;
+}
+
+.disabled {
+    position: relative;
+}
+
+.logo-container {
+    margin-bottom: 70px;
+}
+
+.disabled::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    cursor: not-allowed;
+}
+
+.signup-logo {
+    height: 45px;
+}
+
+.http-notif-container {
+    top: 90px;
+}
+
+.form {
+    .save-button {
+        /* display: block;
+        justify-self: right;
+        margin: 10px 35px 0 0;
+        color: rgba(255, 255, 255, 0.8);
+        height: 100%;
+        padding: 8px 15px;
+        margin-left: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all .2s; */
+        display: flex;
+        justify-self: right;
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        padding: 8px 10px;
+        margin: 10px 42px 0 0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: linear-gradient(to bottom right,
+            rgba(253, 253, 253, 0.1) 10%,
+            rgba(3, 3, 3, 0.1) 80%
+        );
+        outline: none;
+        transition: all .3s;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+
+        .save-icon {
+            padding: 0 5px 3px 0;
+            align-self: center;
+        }
+    }
+
+    .save-button:hover {
+        scale: 1.1;
+        color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0px 0 15px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    
+
+    .input-group {
+        display: flex;
+        align-items: center;
+
+        .input-state-button {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            height: 100%;
+            text-align: center;
+            padding: 5px 7px 2px 7px;
+            margin: 10px 0 10px 5px;
+            background: transparent;
+            border:1px solid transparent;
+            border-radius: 7px;
+            transition: all .2s;
+            svg {
+                padding-top: 3px;
+            }
+        }
+
+        .input-state-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .input-label {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            padding: 0;
+            flex: .25;
+        }
+
+        .text-input {
+            padding: 5px 10px;
+            border-radius: 5px;
+            flex: 1;
+        }
+
+        .text-input:disabled {
+            color: rgba(255, 255, 255, 0.8)
+        }
+
+        .input-error-message {
+            display: inline;
+            top: 120px;
+            left: 30px;
+            z-index: 0;
+        }
+    }
+
+    .prompt-group {
+        display: flex;
+        margin-top: 14px;
+        align-items: center;
+
+        input {
+            width: 355px;
+        }
+    }
+}
+
+.prompt-button {
+    justify-self: right;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+    height: 100%;
+    padding: 8px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all .2s;
+}
+
+.prompt-button:hover {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    scale: 1.1;
+}
+.prompt-button:active {
+    scale: 1;
+    box-shadow: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all .1s;
+}
+
+.text-input-top,
+.text-input-top:focus,
+.text-input-bottom,
+.text-input-bottom:focus {
+    border: none;
+    box-shadow: none;
+}
+
+.text-input-top {
+    border-radius: 0px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    padding-bottom: 5px;
+}
+
+.text-input-bottom {
+    border-radius: 0;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    padding-top: 5px;
+}
+
+.goto-login-container {
+    text-align: right;
+    margin: 0;
+}
+
+.goto-login-label {
+    color: var(--white);
+    margin: 10px 5px 0 0;
+    font-size: 16px;
+}
+
+.goto-login-link {
+    cursor: pointer;
+    padding: 2px 0;
+    color: rgb(55, 175, 255);
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 300ms;
+}
+
+.goto-login-link:hover {
+    color: rgb(55, 175, 255);
+    border-bottom: 2px solid rgb(55, 175, 255);
+}
+
+@keyframes fadeIn {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}

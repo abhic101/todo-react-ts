@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+        "@/*": ["./src/*"],
+        "@components": ["./src/components/index.component"],
+        "@assets/*": ["./src/assets/*"],
+        "@hooks": ["./src/hooks/index.hook"],
+        "@context": ["./src/context/index.context"],
+        "@api": ["./src/apis/index.api"]
+    }
+  },
+  "include": ["src"]
+}

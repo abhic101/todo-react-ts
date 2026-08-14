@@ -1,0 +1,309 @@
+@keyframes shake {
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.login-main {
+    font-family: 'Nunito';
+    width: 350px;
+    padding: var(--dialog-padding);
+    padding-bottom: 40px;
+    margin: 0;
+    border-radius: var(--dialog-border-radius);
+}
+
+.login-main p {
+    cursor: default;
+}
+
+.close-button-container {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    text-align: right;
+    margin: 0;
+}
+
+.close-button-container > button {
+    background-color: transparent;
+    margin: 0;
+    padding: 0 15px;
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    
+    color: var(--dialog-input-bg-color);
+    font-family: var(--nunito);
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.login-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+.login-header {
+    margin: 0 0 0 10px;
+    margin-left: 10px;
+    color: var(--white);
+    font-size: 25px;
+    font-weight: 700;
+}
+.login-subheader {
+    font-size: 19px;
+    color: var(--white);
+    text-align: center;
+    margin: 15px 0 80px 0;
+
+}
+.login-logo {
+    height: 45px;
+}
+
+.http-notif-container {
+    width: 100%;
+    position: fixed;
+    display: flex;
+    top: 140px;
+    left: 0;
+    justify-content: center;
+}
+
+.http-notif-message-failure {
+    animation: fadeIn .3s ease-out;
+    color: rgb(255, 88, 88);
+    padding: 10px 20px;
+    margin: 0;
+    border-radius: 10px;
+    background-color: rgba(46, 16, 16, 0.445);
+}
+
+.http-notif-message-success {
+    animation: fadeIn .5s ease-out;
+    color: rgb(12, 199, 90);
+    padding: 10px 20px;
+    margin: 0;
+    border-radius: 10px;
+    background-color: rgba(2, 53, 32, 0.767);
+}
+
+.login-form {
+    margin: 3px;
+}
+
+.login-form-input-label {
+    color: var(--white);
+    margin: 30px 0 7px 15px;
+}
+
+.login-form-input {
+    font-family: 'nunito';
+    font-size: 16px;
+    color: var(--white);
+
+    margin: 0;
+    width: calc(100% - 6px - 40px);
+    height: 30px;
+    padding: 10px 25px;
+
+    outline: none;
+    border-radius: 21px;
+    border: 1px solid var(--input-border-color); /* This variable is defined dynamically */
+    background-color: var(--dialog-input-bg-color);
+}
+
+.login-form-input::placeholder {
+    color: var(--dialog-placeholder-color);
+    font-family: 'Nunito';
+}
+
+.login-form-input:focus {
+    transition: box-shadow 100ms;
+    /* border: 1px solid rgb(253, 253, 253); */
+    box-shadow: var(--dialog-input-focus-shadow);
+}
+
+.login-form-input:-webkit-autofill,
+.login-form-input:-webkit-autofill:active,
+.login-form-input:-webkit-autofill:hover ,
+.login-form-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #1a1a1a !important;
+    box-shadow: 0 0 0 30px rgb(25, 38, 52) inset !important;
+    -webkit-text-fill-color: var(--white) !important;
+    color: white !important;
+}
+
+.login-form-input:-webkit-autofill::first-line {
+    color: white !important;
+    -webkit-text-fill-color: #1a1a1a !important;
+}
+
+.input-error-message {
+    animation: fadeIn 0.2s ease-in-out;
+    position: fixed;
+    width: calc(100% - 140px);
+    margin: 0 0;
+    color: rgb(255, 88, 88);
+    text-align: right;
+}
+
+.register-now-container {
+    text-align: right;
+}
+
+.register-now-label {
+    color: var(--white);
+    margin: 15px 5px 0 30px;
+}
+
+.register-now {
+    cursor: pointer;
+    padding: 2px 0;
+    color: rgb(55, 175, 255);
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 300ms;
+}
+
+.register-now:hover {
+    color: rgb(55, 175, 255);
+    border-bottom: 2px solid rgb(55, 175, 255);
+}
+
+.login-submit-button {
+    display: block;
+    width: calc(100% - 6px);
+    height: 50px;
+    margin-top: 40px;
+    margin-left: 3px;
+
+    color:var(--white);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+
+    border: 2px solid var(--white);
+    border-radius: 26px;
+    box-shadow: 0 0 4px rgb(8, 8, 8);
+    background-color: transparent;
+    /* background-color: rgb(107, 114, 255); */
+    transition: color 300ms, background-color 300ms, border 300ms;
+}
+
+.login-submit-button:hover {
+    /* background-color: rgb(93, 100, 224); */
+    color: var(--black);
+    background-color: var(--white);
+    border: 2px solid var(--white);
+}
+
+.login-submit-button:disabled {
+    background-color: transparent;
+    border: 2px solid transparent;
+    box-shadow: none;
+}
+
+.login-submit-button:focus {
+    outline: none;
+    color: var(--black);
+    background-color: var(--white);
+    border: 2px solid var(--white);
+}
+
+/* .submit-loader {
+  --size: 2px;
+  width: calc(16 * var(--size));
+  height: calc(16 * var(--size));
+  border: calc(1.5 * var(--size)) solid var(--white);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(180deg);
+  }
+  50% {
+    transform: rotate(205deg);
+  }
+  60% {
+    transform: rotate(230deg);
+  }
+  70% {
+    transform: rotate(255deg);
+  }
+  80% {
+    transform: rotate(280deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} */
+
+.submit-loader {
+  --color-1: #fff;
+  --size: 1px;
+
+  width: calc(12 * var(--size));
+  height: calc(12 * var(--size));
+  border-radius: 50%;
+  display: block;
+  margin: calc(15 * var(--size)) auto;
+  position: relative;
+  color: var(--color-1);
+  box-sizing: border-box;
+  animation: animloader 1s linear infinite;
+}
+
+@keyframes animloader {
+  0% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(-2 * var(--size));
+  }
+  25% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(2 * var(--size));
+  }
+  50% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(-2 * var(--size));
+  }
+  75% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(-2 * var(--size));
+  }
+  100% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(-2 * var(--size));
+  }
+}
+
+

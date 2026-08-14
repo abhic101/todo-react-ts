@@ -1,0 +1,319 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+:root {
+    --white: rgb(233, 237, 236);
+    --black: rgb(15, 15, 15);
+    --primary-font: 'Nunito';
+
+    --primary-dark-shadow: rgba(5, 5, 5, 0.5);
+    --primary-light-shadow: rgba(243, 243, 243, 0.5);
+    
+    --link_unvisited: #b45d15;
+    --link_hover: #6e8810;
+    --link_visited: #6930c5;
+
+    /*DIALOG BOXES*/
+    --overlay-bg-color: rgba(255, 255, 255, 0.2);
+    --dialog-bg-color-1: rgba(0, 0, 0, 0.5);
+    --dialog-bg-color-2: rgba(2, 12, 20, 0.5);
+    --dialog-bg-gradient: linear-gradient(to bottom right,
+        rgba(9, 31, 53, 0.5) 20%,
+        rgba(2, 12, 20, 0.5) 80%
+    );
+    --dialog-blur-radius: 20px;
+    --dialog-padding: 10px 70px 40px 70px;
+    --dialog-border-radius: 17px;
+    --dialog-box-shadow: 0 0 10px 2px rgba(5, 5, 5, 0.5);
+
+    --dialog-input-bg-color: rgba(2, 12, 20, 0.5);
+    --dialog-input-focus-shadow: 0 0 4px rgb(214, 214, 214);
+    --dialog-input-shadow-error: 0 0 4px rgb(255, 88, 88);
+    --dialog-input-placeholder-color: rgb(100, 114, 125);
+    --input-error-color: rgb(255, 88, 88);
+    --input-error-border-color: rgb(118, 71, 71);
+    
+    
+    --dialog-http-error-msg-color: rgb(255, 88, 88);
+    --dialog-http-error-bg-color: rgba(46, 16, 16, 0.445);
+    --dialog-http-success-msg-color: rgb(12, 199, 90);
+    --dialog-http-success-bg-color: rgba(2, 53, 32, 0.767);
+
+    --error-boundary-msg-color: rgb(255, 224, 88);
+    
+}
+
+/*
+-----------GLOBAL STYLING---------
+*/
+body {
+    font-family: "Nunito";
+    margin: 0px;
+    background-image: url(./assets/background_4_widescreen.jpg);
+    background-color: rgb(7, 128, 233);
+    background-size:cover;
+    background-attachment: fixed;
+}
+a {
+    outline: none;
+    color: var(--link_unvisited);
+    text-decoration: none;
+}
+a:hover {
+    color: var(--link_hover);
+}
+a:visited {
+    color: var(--link_visited);
+}
+a:visited:hover {
+    color: var(--link_hover);
+}
+#page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+#content {
+    flex: 1;
+}
+
+/*
+-----------TODO LIST STYLING------------
+*/
+main {
+    background-image: url(./assets/background_4_widescreen.jpg);
+    background-color: rgb(7, 128, 233);
+    background-size:cover;
+    background-attachment: fixed;
+    flex: 1;
+    color: rgb(238, 238, 238);
+}
+
+/*---------- DIALOG GLOBAL (works for v2 only) --------------*/
+
+.dialog-root {
+    font-family: 'Nunito';
+    padding: var(--dialog-padding);
+    margin: 0;
+    border-radius: var(--dialog-border-radius);
+}
+
+.dialog-root p {
+    cursor: default;
+}
+
+.dialog-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.dialog-header {
+    margin: 0 0 0 10px;
+    margin-left: 10px;
+    color: var(--white);
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.dialog-subheader {
+    font-size: 19px;
+    color: var(--white);
+    text-align: center;
+    margin: 15px 0 80px 0;
+}
+
+.dialog-logo {
+    size: 45px;
+}
+
+.dialog-http-notif-container {
+    width: 100%;
+    position: fixed;
+    display: flex;
+    top: 140px;
+    left: 0;
+    justify-content: center;
+}
+
+.dialog-http-notif-message-failure {
+    animation: fadeIn .3s ease-out;
+    color: var(--dialog-http-error-msg-color);
+    padding: 10px 20px;
+    margin: 0;
+    border-radius: 10px;
+    background-color: var(--dialog-http-error-bg-color);
+}
+
+.dialog-http-notif-message-success {
+    animation: fadeIn .5s ease-out;
+    color: var(--dialog-http-success-msg-color);
+    padding: 10px 20px;
+    margin: 0;
+    border-radius: 10px;
+    background-color: var(--dialog-http-success-bg-color);
+}
+
+.dialog-form {
+    margin: 3px;
+}
+
+.dialog-input-label {
+    color: var(--white);
+    margin: 30px 0 7px 15px;
+}
+
+.dialog-text-input {
+    font-family: 'nunito';
+    font-size: 16px;
+    color: var(--white);
+
+    margin: 0;
+    width: calc(100% - 6px - 40px);
+    height: 30px;
+    padding: 10px 25px;
+
+    outline: none;
+    border-radius: 21px;
+    border: 2px solid transparent;
+    background-color: var(--dialog-input-bg-color);
+}
+
+.dialog-text-input::placeholder {
+    color: var(--dialog-input-placeholder-color);
+    font-family: 'Nunito';
+}
+
+.dialog-text-input:focus {
+    transition: box-shadow 100ms;
+    /* border: 1px solid rgb(253, 253, 253); */
+    box-shadow: var(--dialog-input-focus-shadow);
+}
+
+.dialog-text-input:-webkit-autofill,
+.dialog-text-input:-webkit-autofill:active,
+.dialog-text-input:-webkit-autofill:hover ,
+.dialog-text-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #1a1a1a !important;
+    box-shadow: 0 0 0 30px rgb(25, 38, 52) inset !important;
+    -webkit-text-fill-color: var(--white) !important;
+    color: var(--white) !important;
+}
+
+.dialog-text-input:-webkit-autofill::first-line {
+    color: var(--white) !important;
+    -webkit-text-fill-color: #1a1a1a !important;
+}
+
+.dialog-text-input:disabled {
+    color: var(--dialog-input-placeholder-color);
+    background: rgba(2, 12, 20, 0.2);
+}
+
+.dialog-input-error-message {
+    animation: fadeIn 0.2s ease-in-out;
+    position: fixed;
+    width: calc(100% - 140px);
+    margin: 0 0;
+    color: var(--input-error-color);
+    text-align: right;
+}
+
+.dialog-submit-button {
+    display: block;
+    width: calc(100% - 6px);
+    height: 50px;
+    margin-top: 40px;
+    margin-left: 3px;
+
+    color:var(--white);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+
+    border: 2px solid var(--white);
+    border-radius: 26px;
+    box-shadow: 0 0 4px rgb(8, 8, 8);
+    background-color: transparent;
+    transition: color 300ms, background-color 300ms, border 300ms;
+}
+
+.dialog-submit-button:hover {
+    color: var(--black);
+    background-color: var(--white);
+}
+
+.dialog-submit-button:disabled {
+    background-color: transparent;
+    border: 2px solid transparent;
+    box-shadow: none;
+}
+
+.dialog-submit-button:focus {
+    outline: none;
+    color: var(--black);
+    background-color: var(--white);
+    border: 2px solid var(--white);
+}
+
+.dialog-submit-loader {
+  --size: 1px;
+
+  width: calc(12 * var(--size));
+  height: calc(12 * var(--size));
+  border-radius: 50%;
+  display: block;
+  margin: calc(15 * var(--size)) auto;
+  position: relative;
+  color: var(--white);
+  box-sizing: border-box;
+  animation: animloader 1s linear infinite;
+}
+
+@keyframes animloader {
+  0% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(-2 * var(--size));
+  }
+  25% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(2 * var(--size));
+  }
+  50% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(-2 * var(--size));
+  }
+  75% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(-2 * var(--size));
+  }
+  100% {
+    box-shadow:
+      calc(14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(38 * var(--size)) 0 0 calc(2 * var(--size)),
+      calc(-14 * var(--size)) 0 0 calc(-2 * var(--size)),
+      calc(-38 * var(--size)) 0 0 calc(-2 * var(--size));
+  }
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+button {
+    font-family: 'Nunito';
+}

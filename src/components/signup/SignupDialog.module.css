@@ -1,0 +1,182 @@
+@keyframes shake {
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.signup-main {
+    font-family: 'Nunito';
+    width: 350px;
+    padding: var(--dialog-padding);
+    padding-bottom: 40px;
+    margin: 0;
+    border-radius: var(--dialog-border-radius);
+    /* backdrop-filter: blur(20px);
+    box-shadow: var(--dialog-box-shadow);
+    background: var(--dialog-bg-gradient); */
+}
+
+.signup-main p {
+    cursor: default;
+}
+
+.close-button-container {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    text-align: right;
+    margin: 0;
+}
+
+.close-button-container > button {
+    background-color: transparent;
+    margin: 0;
+    padding: 0 15px;
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    
+    color: var(--dialog-input-bg-color);
+    font-family: var(--nunito);
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 80px;
+}
+
+.header {
+    margin: 0 0 0 10px;
+    margin-left: 10px;
+    color: var(--white);
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.logo {
+    height: 45px;
+}
+
+/* .subheader {
+    font-size: 19px;
+    color: var(--white);
+    text-align: center;
+    margin: 15px 0 80px 0;  
+} */
+
+.signup-from {
+    margin: 3px;
+}
+
+.input-label {
+    color: var(--white);
+    margin: 20px 0 7px 15px;
+}
+
+.double-input-container {
+    border-radius: 30px;
+    padding-right: 4px;
+}
+
+.text-input {
+    font-family: 'nunito';
+    font-size: 16px;
+    color: var(--white);
+
+    margin: 0;
+    width: calc(100% - 6px - 40px);
+    height: 30px;
+    padding: 10px 25px;
+
+    outline: none;
+    border-radius: var(--dialog-input-border-radius);
+    border: 1px solid var(--input-border-color);
+    background-color: var(--dialog-input-bg-color);
+}
+
+.text-input-top {
+    border-radius: 0px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    padding: 13px 25px 7px 25px;
+}
+
+.text-input-bottom {
+    border-radius: 0px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    padding: 7px 25px 13px 25px;
+}
+
+.text-input::placeholder {
+    color: var(--dialog-placeholder-color);
+    font-family: 'Nunito';
+}
+
+.text-input:focus {
+    transition: box-shadow 100ms;
+    /* border: 1px solid rgb(253, 253, 253); */
+    box-shadow: var(--dialog-input-focus-shadow);
+}
+
+.text-input-top:focus, .text-input-bottom:focus {
+    /* border: 1px solid rgb(253, 253, 253); */
+    box-shadow: none;
+}
+
+.double-input-container:has(.text-input:focus) {
+    box-shadow: var(--dialog-input-focus-shadow);
+}
+
+.input-error-message {
+    animation: fadeIn 0.2s ease-in-out;
+    position: fixed;
+    width: calc(100% - 140px);
+    margin: 0 0;
+    color: rgb(255, 88, 88);
+    text-align: right;
+}
+
+.signup-button {
+    display: block;
+    width: calc(100% - 6px);
+    height: 50px;
+    margin-top: 40px;
+    margin-left: 3px;
+
+    color:var(--white);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+
+    border: 2px solid var(--white);
+    border-radius: 26px;
+    box-shadow: 0 0 4px rgb(8, 8, 8);
+    background-color: transparent;
+    /* background-color: rgb(107, 114, 255); */
+    transition: color 300ms, background-color 300ms, border 300ms;
+}
+
+.signup-button:hover {
+    /* background-color: rgb(93, 100, 224); */
+    color: var(--black);
+    background-color: var(--white);
+    border: 2px solid var(--white);
+}
+
+.signup-button:focus {
+    outline: none;
+    color: var(--black);
+    background-color: var(--white);
+    border: 2px solid var(--white);
+}

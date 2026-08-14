@@ -1,0 +1,61 @@
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.login-root {
+    width: 350px;
+}
+
+.disabled {
+    position: relative;
+}
+
+.disabled::before {
+    content:'';
+    position: absolute;
+    inset: 0;
+    top: 50px;
+    cursor: not-allowed;
+}
+
+.login-logo {
+    height: 45px;
+}
+
+/*Dont Touch this */
+.http-notif-message-failure {
+    animation: fadeIn .3s ease-out;
+    color: rgb(255, 88, 88);
+    padding: 10px 20px;
+    margin: 0;
+    border-radius: 10px;
+    background-color: rgba(46, 16, 16, 0.445);
+}
+.http-notif-message-success {
+    animation: fadeIn .5s ease-out;
+    color: rgb(12, 199, 90);
+    padding: 10px 20px;
+    margin: 0;
+    border-radius: 10px;
+    background-color: rgba(2, 53, 32, 0.767);
+}
+
+.register-now-container {
+    text-align: right;
+}
+.register-now-label {
+    color: var(--white);
+    margin: 15px 5px 0 30px;
+}
+.register-now {
+    cursor: pointer;
+    padding: 2px 0;
+    color: rgb(55, 175, 255);
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 300ms;
+}
+.register-now:hover {
+    color: rgb(55, 175, 255);
+    border-bottom: 2px solid rgb(55, 175, 255);
+}

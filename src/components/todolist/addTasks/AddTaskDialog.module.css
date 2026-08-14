@@ -1,0 +1,124 @@
+.addtask-root {
+    width: 600px;
+    padding-left: 60px;
+    padding-right: 60px;
+    padding-bottom: 40px;
+}
+
+.disabled {
+    position: relative;
+}
+
+.disabled::before {
+    content:'';
+    position: absolute;
+    inset: 0;
+    top: 50px;
+    cursor: not-allowed;
+}
+
+.addtask-logo {
+    height: 45px;
+}
+
+.addtask-form {
+    padding-top: 20px;
+}
+
+.http-notif-container {
+    top: 90px;
+}
+
+/*Dont Touch this */
+.http-notif-message-failure {
+    animation: fadeIn .3s ease-out;
+    color: rgb(255, 88, 88);
+    padding: 10px 20px;
+    margin: 0;
+    border-radius: 10px;
+    background-color: rgba(46, 16, 16, 0.445);
+}
+.http-notif-message-success {
+    animation: fadeIn .5s ease-out;
+    color: rgb(12, 199, 90);
+    padding: 10px 20px;
+    margin: 0;
+    border-radius: 10px;
+    background-color: rgba(2, 53, 32, 0.767);
+}
+
+.add-task-details {
+    color: var(--white);
+}
+
+.loader {
+    margin-top: 36px
+}
+
+.button-group {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+    padding: 0 10px;
+
+    button {
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 18px;
+        width: 300px;
+        flex: .2;
+        padding: 13px 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: linear-gradient(to bottom right,
+            rgba(253, 253, 253, 0.1) 10%,
+            rgba(3, 3, 3, 0.1) 80%
+        );
+        outline: none;
+        transition: all .3s;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    button:hover {
+        scale: 1.1;
+        color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0px 0 15px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    button:active {
+        scale: 1;
+        box-shadow: none;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all .1s;
+    }
+
+    button:hover .close-icon {
+        color:rgba(255, 238, 142, 0.9) !important;
+    }
+    button:hover .save-icon {
+        color:rgba(73, 255, 215, 0.9) !important;
+    }
+    button:disabled {
+        opacity: 0;
+    }
+
+    button span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .close-icon, .save-icon {
+            transition: all .3s;
+            flex:.2;
+        }
+        .button-label {
+            flex: .8;
+        }
+    }
+
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
