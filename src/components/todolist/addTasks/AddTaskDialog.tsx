@@ -25,7 +25,6 @@ function AddTaskDialog({task, onClose}: Props) {
     })
 
     async function onSubmit(data: FormData) {
-        await new Promise((resolve) => {setTimeout(resolve, 1000)})
         let updateRes: number | undefined = 100;
         if (task) {
             const newTask = {...task, task_name: data.task_name, task_details: data.task_details}
@@ -102,6 +101,14 @@ function AddTaskDialog({task, onClose}: Props) {
                     </div>
                     :
                     <div className={styles['button-group']}>
+
+                        <button className={styles["cancel-button"]} onClick={(e)=>{e.preventDefault();onClose()}} disabled={isSubmitting}>
+                            <span>
+                                <span className={styles['close-icon']} ><CloseIcon /></span>
+                                <span className={styles['button-label']}> Discard</span>
+                            </span>
+                        </button>
+
                         <button className={styles["addtask-submit-button"]} type="submit" disabled={isSubmitting}>{ task ?
                             <span>
                                 <span className={styles['save-icon']}><SaveIcon /></span>
@@ -113,13 +120,6 @@ function AddTaskDialog({task, onClose}: Props) {
                                 <span className={styles['button-label']}>Add Task</span>
                             </span>
                         }
-                        </button>
-
-                        <button className={styles["cancel-button"]} onClick={onClose} disabled={isSubmitting}>
-                            <span>
-                                <span className={styles['close-icon']} ><CloseIcon /></span>
-                                <span className={styles['button-label']}> Discard</span>
-                            </span>
                         </button>
                     </div>
                 }
