@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const accountApi = axios.create({
-    baseURL: 'http://localhost:3000/account',
+    baseURL: 'https://todo-backend.mooo.com/account',
     timeout: 10000,
     withCredentials: true,
     headers: {
