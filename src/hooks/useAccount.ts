@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo} from 'react';
+import { useEffect, useState} from 'react';
 import { isAxiosError } from 'axios';
 import { useAuthContext, defaultUser } from '@hooks';
 import { SettingsData } from '../components/index.componentTypes';

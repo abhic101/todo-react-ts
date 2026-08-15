@@ -18,7 +18,7 @@ interface Props {
 function ActiveModalRender({activeDialog, setActiveDialog, dialogProps}: Props) {
     const [closeRequested, setCloseRequested] = useState(true);
     const onCloseWrapperForDelay = useRef(() => {});
-    const changeDialogWrapperForDelay = useRef((dialog: AvailableDialogs) => {});
+    const changeDialogWrapperForDelay = useRef((dialog: AvailableDialogs) => {dialog});
 
     useEffect(() => {
         if (activeDialog === null) return;

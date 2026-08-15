@@ -6,8 +6,6 @@ import { TodoData } from '../components/index.componentTypes'
 
 type TodoTask = TodoData.TodoTask;
 
-const todoTasks: TodoTask[] = TodoData.todoTasksSample;
-
 function useTodoList() {
     const [todoList, setTodoList] = useState<TodoTask[]>([]);
     const [user, setUser] = useAuthContext();
@@ -19,7 +17,7 @@ function useTodoList() {
         };
         todoAPI.get<{message: string, tasks: TodoTask[]}>('/').then((res) => {
             console.log(res.data.tasks);
-            setTodoList(res.data.tasks.sort((a, b) => a.status ? 1 : -1));
+            setTodoList(res.data.tasks.sort((a, b) => {b;return a.status ? 1 : -1}));
         }).catch((err) => {
             if(isAxiosError(err)) {
                 console.log('Status code sent: ', err.response?.status);

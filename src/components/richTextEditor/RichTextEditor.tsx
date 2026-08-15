@@ -17,7 +17,7 @@ interface Props {
 
 function TipTap({control, name, rules, task}: Props) {
     const {
-      field: { value, onChange },
+      field: { onChange },
       fieldState: { error }
     } = useController({name, control, rules, defaultValue: (task ? task.task_details ? task.task_details : '' : '')});
     const editor = useEditor({

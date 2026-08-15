@@ -35,6 +35,7 @@ function SettingsDialog({onClose, changeDialog}: Props) {
         lastname: false
     });
     const [currentSubDialog, setCurrentSubDialog] = useState<ModalData.AvailableDialogs | null>(null);
+    () => {onClose()}
 
     async function onSubmit(data: ProfileFormType) {
         let profileRes: number | undefined;

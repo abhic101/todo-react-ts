@@ -21,6 +21,7 @@ function SignupDialog ({onClose, changeDialog}: Props) {
         mode: 'onTouched'
     });
     const [ usernameAvailability, setUsernameAvailability ] = useState<null | "Username Not Availabe">(null);
+    () => {onClose()}
 
     /** Submit handler for signup form */
     const onSubmit = async (data: FormData) => {

@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useMemo} from 'react';
-import { useTodo, useAuthContext } from '@hooks'
+import { useTodo } from '@hooks'
 
 interface Props { 
     children: ReactNode;

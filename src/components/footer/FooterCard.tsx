@@ -1,4 +1,3 @@
-import type {ElementType} from 'react';
 import type { Contact, Social } from './footer.data'
 import { IconComponent } from '@components';
 import styles from './Footer.module.css';
