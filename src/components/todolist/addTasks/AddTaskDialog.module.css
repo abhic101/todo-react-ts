@@ -1,4 +1,7 @@
 .addtask-root {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     width: 600px;
     padding-left: 60px;
     padding-right: 60px;
@@ -21,8 +24,8 @@
     height: 45px;
 }
 
-.addtask-form {
-    padding-top: 20px;
+.addtask-logo-container {
+    margin-bottom: 60px;
 }
 
 .http-notif-container {
@@ -65,9 +68,8 @@
         color: rgba(255, 255, 255, 0.7);
         border-radius: 12px;
         cursor: pointer;
+        width: 106px;
         font-size: 18px;
-        width: 300px;
-        flex: .2;
         padding: 13px 10px;
         border: 1px solid rgba(255, 255, 255, 0.2);
         background: linear-gradient(to bottom right,
@@ -106,6 +108,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        gap: 5px;
 
         .close-icon, .save-icon {
             transition: all .3s;
@@ -116,6 +119,20 @@
         }
     }
 
+}
+
+@media (max-width: 720px) {
+    .addtask-root {
+        width: 400px;
+    }
+}
+
+@media (--sm) {
+    .addtask-root {
+        width: 300px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }
 
 @keyframes fadeIn {

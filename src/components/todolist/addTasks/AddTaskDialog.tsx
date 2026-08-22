@@ -16,7 +16,7 @@ interface Props {
 
 function AddTaskDialog({task, onClose}: Props) {
     const [httpNotif, setHttpNotif] = useState<string | null>(null);
-    const [ , addTasks, updateTask] = useTodoContext();
+    const { addTask, updateTask } = useTodoContext();
     const {
         register, control, handleSubmit, formState: {isSubmitting, errors}
     } = useForm<FormData>({
@@ -31,7 +31,7 @@ function AddTaskDialog({task, onClose}: Props) {
             updateRes = await updateTask(newTask);
         }
         else {
-            updateRes = await addTasks(data);
+            updateRes = await addTask(data);
         }
 
         if (!updateRes) {
@@ -67,29 +67,38 @@ function AddTaskDialog({task, onClose}: Props) {
     {/* Task name input group */}
                 <div className={'dialog-input-group ' + styles["addtask-input-group"]}>
 
-                    {errors.task_name? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.task_name.message}
-                    </p>
-                    )  : <></>}
+                    <div className={`dialog-input-label-error`} >
+                        
+                        <p className={'dialog-input-label ' + styles["login-input-label"]}>Task Name</p>
 
-                    <p className={'dialog-input-label ' + styles["login-input-label"]}>Task Name</p>
+                        {errors.task_name? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.task_name.message}
+                        </p>
+                        )  : <></>}
+
+                    </div>
                     
-                    <input {...register('task_name', {value:task? task.task_name : ''})} className={'dialog-text-input ' + styles["addtask-text-input"]}  placeholder='Enter Task Name' disabled={isSubmitting} autoFocus style={borderColorOnError('task_name')} />
+                    <input {...register('task_name', {value:task? task.task_name : ''})} className={'dialog-text-input ' + styles["addtask-text-input"]}  placeholder='Enter Task Name' disabled={isSubmitting} autoFocus style={borderColorOnError('task_name')} autoComplete="off" />
                 </div>
 
     {/* Task details input group */}
                 <div className={'dialog-input-group ' + styles["addtask-input-group"]}>
 
-                    {errors.task_details? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.task_details.message}
-                    </p>
-                    )  : null}
+                    <div className={`dialog-input-label-error`} >
 
-                    <p className={'dialog-input-label ' + styles["login-input-label"]}>
+                        <p className={'dialog-input-label ' + styles["login-input-label"]}>
                         Task Details
                     </p>
+
+                        {errors.task_details? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.task_details.message}
+                        </p>
+                        )  : null}
+
+                    </div>
+                    
                     <div className={styles['add-task-details']} >
                         <RichTextEditor task={task || undefined} control={control} name='task_details' rules={{}}/>
                    </div>
@@ -117,7 +126,7 @@ function AddTaskDialog({task, onClose}: Props) {
                             :
                             <span>
                                 <span className={styles['save-icon']}><AddIcon /></span>
-                                <span className={styles['button-label']}>Add Task</span>
+                                <span className={styles['button-label']}>Add</span>
                             </span>
                         }
                         </button>

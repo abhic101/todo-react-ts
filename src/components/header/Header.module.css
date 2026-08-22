@@ -60,3 +60,18 @@
     display: block;
     width: auto;
 }
+
+@media (--md) {
+    .header-main {
+        justify-content: space-between;
+    }
+}
+
+@media (--sm) {
+    .header-main {
+        justify-content: center;
+    }
+    .slogan-container {
+        display: none;
+    }
+}

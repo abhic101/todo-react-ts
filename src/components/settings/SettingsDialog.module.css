@@ -1,15 +1,9 @@
-@keyframes shake {
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
 .signup-root {
-    width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 450px;
+    padding-right: 60px;
 }
 
 .disabled {
@@ -17,7 +11,7 @@
 }
 
 .logo-container {
-    margin-bottom: 70px;
+    margin-bottom: 50px;
 }
 
 .disabled::before {
@@ -37,22 +31,13 @@
 
 .form {
     .save-button {
-        /* display: block;
-        justify-self: right;
-        margin: 10px 35px 0 0;
-        color: rgba(255, 255, 255, 0.8);
-        height: 100%;
-        padding: 8px 15px;
-        margin-left: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 7px;
-        background: rgba(255, 255, 255, 0.1);
-        transition: all .2s; */
         display: flex;
-        justify-self: right;
+        justify-content: center;
+        align-self: flex-end;
         color: rgba(255, 255, 255, 0.7);
         border-radius: 7px;
         cursor: pointer;
+        width: 100px;
         font-size: 15px;
         padding: 8px 10px;
         margin: 10px 42px 0 0;
@@ -82,7 +67,9 @@
 
     .input-group {
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
 
         .input-state-button {
             color: rgba(255, 255, 255, 0.8);
@@ -90,7 +77,7 @@
             height: 100%;
             text-align: center;
             padding: 5px 7px 2px 7px;
-            margin: 10px 0 10px 5px;
+            margin: 0 0 0 5px;
             background: transparent;
             border:1px solid transparent;
             border-radius: 7px;
@@ -109,8 +96,12 @@
         .input-label {
             color: rgba(255, 255, 255, 0.8);
             margin: 0;
-            padding: 0;
-            flex: .25;
+        }
+
+        .input-group-interactibles {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .text-input {
@@ -122,22 +113,22 @@
         .text-input:disabled {
             color: rgba(255, 255, 255, 0.8)
         }
-
         .input-error-message {
-            display: inline;
-            top: 120px;
-            left: 30px;
-            z-index: 0;
+            margin-right: 10px;
         }
+
     }
 
     .prompt-group {
         display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
         margin-top: 14px;
+        gap: 10px;
         align-items: center;
 
-        input {
-            width: 355px;
+        .input-label {
+            flex: .28;
         }
     }
 }
@@ -214,7 +205,26 @@
     border-bottom: 2px solid rgb(55, 175, 255);
 }
 
+@media (max-width: 590px) {
+    .signup-root {
+        padding-left: 20px;
+        padding-right: 10px;
+    }
+}
+
+@media (--sm) {
+    .signup-root {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 10px;
+    }
+}
+
 @keyframes fadeIn {
     0% {opacity: 0;}
     100% {opacity: 1;}
+}
+@keyframes shake {
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
 }

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const accountApi = axios.create({
-    baseURL: 'https://todo-backend.mooo.com/account',
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/account`,
     timeout: 10000,
     withCredentials: true,
     headers: {

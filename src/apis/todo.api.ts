@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const todoAPI = axios.create({
-    baseURL: 'https://todo-backend.mooo.com/todo',
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/todo`,
     timeout: 10000,
     withCredentials: true,
     headers: {

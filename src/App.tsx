@@ -12,7 +12,7 @@ function App() {
         <div id="page-wrapper">
             <MemoizedHeader />
             <AuthProvider>
-                    <Navbar />
+                <Navbar />
                 <TodoList />
             </AuthProvider>
             <MemoizedFooter />

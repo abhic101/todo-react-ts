@@ -18,18 +18,18 @@ function FooterCard({title, list}: Props) {
 
     return (
         <div className={styles["footer-contact-card"]}>
-            <p className={styles['footer-contact-card-title']}>{title}</p>
-{/* Mapping of Footer card items */}
-            {list.map((list) => {
-                return (
-                    <div className={styles['footer-contact-card-item']} key={list.name}>
-                        <a href={list.link} target='_blank'>
-                            <IconComponent icon={list.iconURL ? list.iconURL : Fallback} />
-                            <p className={styles['footer-contact-card-item-label']}>{list.label}</p>
+            <p className={styles['card-title']}>{title}</p>
+            <div className={`${styles['card-items-container']}`} >
+    {/* Mapping of Footer card items */}
+                {list.map((items) => {
+                    return (
+                        <a key={items.name} href={items.link} className={styles['card-item']} target='_blank'>
+                            <IconComponent icon={items.iconURL ? items.iconURL : Fallback} />
+                            <p className={styles['card-item-label']}>{items.label}</p>
                         </a>
-                    </div>
-                )
-            })}
+                    )
+                })}
+            </div>
         </div>
     )
 }

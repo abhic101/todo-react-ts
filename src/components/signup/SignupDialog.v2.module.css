@@ -9,6 +9,9 @@
 }
 
 .signup-root {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     width: 400px;
 }
 
@@ -17,7 +20,7 @@
 }
 
 .logo-container {
-    margin-bottom: 70px;
+    margin-bottom: 50px;
 }
 
 .disabled::before {
@@ -32,7 +35,7 @@
 }
 
 .http-notif-container {
-    top: 100px;
+    top: 90px;
 }
 
 .multiple-text-input-container {
@@ -96,4 +99,12 @@
 .goto-login-link:hover {
     color: rgb(55, 175, 255);
     border-bottom: 2px solid rgb(55, 175, 255);
+}
+
+@media (--sm) {
+    .signup-root {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }

@@ -1,5 +1,5 @@
 import {isAxiosError} from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { todoAPI } from '@api';
 import { useAuthContext, defaultUser } from '@hooks';
 import { TodoData } from '../components/index.componentTypes'
@@ -7,31 +7,69 @@ import { TodoData } from '../components/index.componentTypes'
 type TodoTask = TodoData.TodoTask;
 
 function useTodoList() {
-    const [todoList, setTodoList] = useState<TodoTask[]>([]);
     const [user, setUser] = useAuthContext();
-
-    useEffect(() => {
+    const [todoList, setTodoList] = useState<TodoTask[]>(() => {
         if (user.userId === 'guest') {
-            setTodoList([]);
+            const localListString = localStorage.getItem('todoList');
+            if (localListString) {
+                return JSON.parse(localListString) as TodoTask[];
+            }
+        }
+        return [];
+    });
+    const [unsavedTodoList, setUnsavedTodoList] = useState<TodoTask[]>([]);
+    const [showSaveListDialog, setShowSaveListDialog] = useState<boolean>(false);
+    const [isFirstMount, setIsFirstMount] = useState<boolean>(true);
+    const todoListRef = useRef<TodoTask[]>(todoList);
+
+    // Fetch list on mount or on user change(logout, login)
+    useEffect(() => {
+        // Not login - check if stored locally
+        if (user.userId === 'guest') {
+            const localListString = localStorage.getItem('todoList');
+            if (localListString) {
+                const localList = JSON.parse(localListString) as TodoTask[]
+                setTodoList(localList);
+                todoListRef.current = localList;
+            } else {
+                setTodoList([]);
+            }
+            setIsFirstMount(false);
             return;
         };
+        // Logged in - then fetch from server
+        setIsFirstMount(true);
         todoAPI.get<{message: string, tasks: TodoTask[]}>('/').then((res) => {
-            console.log(res.data.tasks);
+            if (todoList.length !== 0 && todoList[0]._id === '1') {
+                setUnsavedTodoList(todoList);
+                setShowSaveListDialog(true);
+            }
             setTodoList(res.data.tasks.sort((a, b) => {b;return a.status ? 1 : -1}));
         }).catch((err) => {
             if(isAxiosError(err)) {
                 console.log('Status code sent: ', err.response?.status);
                 console.log('Message: ', err.response?.data?.message);
                 console.error("axiosError: ", err);
-                if (err.response?.status === 401) {
-                    setUser({...defaultUser});
-                }
             } else {
                 console.error('Error Occurred at GetList: ', err);
             }
         })
-    }, [user]);
+        setIsFirstMount(false);
+    }, [user.userId]);
 
+    useEffect(() => {
+        todoListRef.current = todoList;
+    }, [todoList])
+
+    useEffect(() => {
+        return () => {
+            if (user.userId === 'guest') {
+                localStorage.setItem('todoList', JSON.stringify(todoListRef.current));
+            }
+        }
+    }, [user.userId]);
+
+    // Todo error handler for this hook
     function handleTodoErrors(err: any) {
         if(isAxiosError(err)) {
             console.log('Status code: ', err.response?.status);
@@ -46,8 +84,18 @@ function useTodoList() {
         return 500;
     }
 
+
     async function addTask(task: Omit<TodoTask, "status" | "_id">) {
         try {
+            if (user.userId === 'guest') {
+                setTodoList((prev) => [...prev, {
+                    task_name: task.task_name,
+                    task_details: task.task_details,
+                    status: false,
+                    _id: (todoList.length + 1).toString()
+                }]);
+                return 201;
+            }
             const res = await todoAPI.post('/', task);
             setTodoList((prev) => [...prev, res.data.task]);
             return res.status;
@@ -58,7 +106,9 @@ function useTodoList() {
 
     async function updateTask(task: TodoTask) {
         try {
-            await todoAPI.patch(`/${task._id}`, task);
+            if (user.userId !== 'guest') {
+                await todoAPI.patch(`/${task._id}`, task);
+            }
             setTodoList((prev) => prev.map((t) => {
                 if (t._id === task._id) {
                     t.status = task.status;
@@ -75,14 +125,30 @@ function useTodoList() {
 
     async function deleteTask(task: TodoTask) {
         try {
-            await todoAPI.delete(`/${task._id}`);
+            if (user.userId !== 'guest') {
+                await todoAPI.delete(`/${task._id}`);
+            }
             setTodoList((prev) => prev.filter((t) => t._id !== task._id));
+            return 200;
         } catch(err) {
             handleTodoErrors(err);
         }
     }
 
-    return [ todoList, addTask, updateTask, deleteTask] as const;
+    async function mergeUnsavedList() {
+        try {
+            if (user.userId === 'guest') return;
+            // await todoAPI.post('/', {todoList: todoList});
+            setTodoList([...todoList, ...unsavedTodoList]);
+            setUnsavedTodoList([]);
+            setShowSaveListDialog(false);
+            localStorage.removeItem('todoList');
+        } catch(err) {
+            handleTodoErrors(err);
+        }
+    }
+
+    return { todoList, isFirstMount, showSaveListDialog, setShowSaveListDialog, addTask, updateTask, deleteTask, mergeUnsavedList };
 }
 
 export default useTodoList;

@@ -7,20 +7,20 @@ interface NavLink {
 }
 
 /**Static data of navigation links group for logged in users*/
-const loggedInNavLinks: NavLink[] = [
+const userNavLinks: NavLink[] = [
     { name: 'settings', label: 'Settings', visible: true },
     { name: 'logout', label: 'Logout', visible: true }
 ]
 
 /**Static data of navigation links group for logged out users*/
-const loggedOutNavLinks: NavLink[] = [
+const guestNavLinks: NavLink[] = [
     { name: 'login', label: 'Login', link: '#', visible: true},
     { name: 'signup', label: 'Signup', link: '@', visible: true }
 ]
 
 export {
-    loggedInNavLinks,
-    loggedOutNavLinks
+    userNavLinks,
+    guestNavLinks
 }
 
 export type {

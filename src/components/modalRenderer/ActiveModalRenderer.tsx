@@ -1,7 +1,7 @@
 import { CenterModal, LoginDialog, SignupDialog, TaskEditorDialog, SettingsDialog, ChangeUsernameDialog, ChangePasswordDialog } from '@components'
 import { type SetStateAction, type Dispatch, useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AccountProvider } from '@/context/accountContext';
+
 import { type AvailableDialogs } from './modalRenderer.data';
 
 const DELAY_TIMER = 100;    // In milliseconds
@@ -48,11 +48,9 @@ function ActiveModalRender({activeDialog, setActiveDialog, dialogProps}: Props) 
             {activeDialog === 'login' && <LoginDialog onClose={onCloseWrapperForDelay.current} changeDialog={() => changeDialogWrapperForDelay.current('signup')}/>}
             {activeDialog === 'signup' && <SignupDialog onClose={onCloseWrapperForDelay.current} changeDialog={() => changeDialogWrapperForDelay.current('login')}/>}
             {activeDialog === 'task-editor' && <TaskEditorDialog onClose={onCloseWrapperForDelay.current} task={dialogProps?.task ? dialogProps.task : undefined }/>}
-            <AccountProvider>
-                {activeDialog === 'settings' && <SettingsDialog onClose={onCloseWrapperForDelay.current} changeDialog={changeDialogWrapperForDelay.current}/>}
-                {activeDialog === 'username-updator' && <ChangeUsernameDialog changeDialog={changeDialogWrapperForDelay.current} setParentNotif={dialogProps?.setHttpNotif || null}/>}
-                {activeDialog === 'password-updator' && <ChangePasswordDialog changeDialog={changeDialogWrapperForDelay.current} />}
-            </AccountProvider>
+            {activeDialog === 'settings' && <SettingsDialog onClose={onCloseWrapperForDelay.current} changeDialog={changeDialogWrapperForDelay.current}/>}
+            {activeDialog === 'username-updator' && <ChangeUsernameDialog changeDialog={changeDialogWrapperForDelay.current} setParentNotif={dialogProps?.setHttpNotif || null}/>}
+            {activeDialog === 'password-updator' && <ChangePasswordDialog changeDialog={changeDialogWrapperForDelay.current} />}
         </CenterModal>
         , document.body
     )

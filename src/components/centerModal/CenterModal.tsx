@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import ErrorBoundary from './ErrorBoundary'
 import * as FocusScope from '@radix-ui/react-focus-scope';
+import { RemoveScroll } from 'react-remove-scroll';
 import styles from './CenterModal.module.css'
 
 const BOUNDARY_ERROR_TIMEOUT = 2000;
@@ -46,21 +47,24 @@ function CenterModal({closeRequested, onClose, children}: Props) {
     // Use react portal to render this component as child of dom.body
     return (
         <div className={getClassName('overlay')} onClick={(e) => {e.stopPropagation()}}>
-            <FocusScope.Root trapped loop asChild>
-                <div className={getClassName('panel')} onClick={(e) => e.stopPropagation()}>
-                    
-                    <div className={styles['close-button-container']}><button onClick={onClose} tabIndex={-1}>x</button></div>
-                    
-                    <ErrorBoundary
-                        fallback={<p className={styles['error-boundary-message']}><span className={styles['error-span']}>🚧</span>&nbsp; Under Construction &nbsp;<span className={styles['error-span']}>🚧</span></p>}
-                        onError={(error, info) => {
-                            console.log('Logged: ', error.message, info.componentStack);
-                            onErrorClose();
-                        }}>
-                        {children}
-                    </ErrorBoundary>
-                </div>
-            </FocusScope.Root>
+            <RemoveScroll className={styles['panel-container']}>
+
+                    <FocusScope.Root trapped loop asChild>
+                        <div className={getClassName('panel')} onClick={(e) => e.stopPropagation()}>
+                            
+                            <div className={styles['close-button-container']}><button onClick={onClose} tabIndex={-1}>x</button></div>
+                            
+                            <ErrorBoundary
+                                fallback={<p className={styles['error-boundary-message']}><span className={styles['error-span']}>🚧</span>&nbsp; Under Construction &nbsp;<span className={styles['error-span']}>🚧</span></p>}
+                                onError={(error, info) => {
+                                    console.log('Logged: ', error.message, info.componentStack);
+                                    onErrorClose();
+                                }}>
+                                {children}
+                            </ErrorBoundary>
+                        </div>
+                    </FocusScope.Root>
+            </RemoveScroll>
         </div>
     )
 }

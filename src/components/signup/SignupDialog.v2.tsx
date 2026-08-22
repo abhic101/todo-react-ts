@@ -87,9 +87,9 @@ function SignupDialog ({onClose, changeDialog}: Props) {
                 </p>
             </div>
 
-            { httpNotif ? (
+            { !httpNotif ? (
                 <div className={'dialog-http-notif-container ' + styles['http-notif-container']}>
-                    <div className={httpNotif === 'Account Created Successfully' ? 'dialog-http-notif-message-success' : 'dialog-http-notif-message-failure'}>{httpNotif}</div>
+                    <div className={httpNotif === 'Account Created Successfully' ? 'dialog-http-notif-message-success' : 'dialog-http-notif-message-failure'}>{"Failure Message"}</div>
                 </div>
             ) : (<></>)}
 
@@ -100,14 +100,17 @@ function SignupDialog ({onClose, changeDialog}: Props) {
     {/* Firstname input group */}
                 <div className={'dialog-input-group ' + styles['input-group']}>
 
-    
-                    {errors.firstname ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.firstname.message}
-                    </p>
-                    )  : <></>}
+                    <div className={`dialog-input-label-error ${styles['login-input-label-error']}`} >
 
-                    <p className={'dialog-input-label ' + styles['input-label']}>Name</p>
+                        <p className={'dialog-input-label ' + styles['input-label']}>Name</p>
+
+                        {errors.firstname ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.firstname.message}
+                        </p>
+                        )  : <></>}
+
+                    </div>
 
                     <div className={styles['multiple-text-input-container']} style={borderColorOnError('firstname')}>
                         
@@ -120,17 +123,21 @@ function SignupDialog ({onClose, changeDialog}: Props) {
     {/* Username input group */}
                 <div className={'dialog-input-group ' + styles['input-group']}>
 
-                    {errors.username ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                            {errors.username.message}
-                        </p>
-                    )  : usernameAvailability ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                            {usernameAvailability}
-                        </p>
-                    ): <></>}
+                    <div className={`dialog-input-label-error ${styles['login-input-label-error']}`} >
 
-                    <p className={'dialog-input-label ' + styles['input-label']}>Username</p>
+                        <p className={'dialog-input-label ' + styles['input-label']}>Username</p>
+
+                        {errors.username ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                                {errors.username.message}
+                            </p>
+                        )  : usernameAvailability ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                                {usernameAvailability}
+                            </p>
+                        ): <></>}
+
+                    </div>
 
                     <input {...restUsername} onChange={(e) => {
                         rhfOnChangeUsername(e);
@@ -147,17 +154,21 @@ function SignupDialog ({onClose, changeDialog}: Props) {
     {/* Password input group */}
                 <div className={'dialog-input-group ' + styles['input-group']}>
 
-                    {errors.password ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.password.message}
-                    </p>
-                    )  : errors.confirmPassword ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.confirmPassword.message}
-                    </p>
-                    )  : <></>}
+                    <div className={`dialog-input-label-error ${styles['login-input-label-error']}`} >
 
-                    <p className={`dialog-input-label ${styles['input-label']} ${styles['password-input-label']}`}>Password</p>
+                        <p className={`dialog-input-label ${styles['input-label']}`}>Password</p>
+
+                        {errors.password ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.password.message}
+                        </p>
+                        )  : errors.confirmPassword ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.confirmPassword.message}
+                        </p>
+                        )  : <></>}
+
+                    </div>
 
                     <div className={styles['multiple-text-input-container']} style={borderColorOnError('password')}>
                         

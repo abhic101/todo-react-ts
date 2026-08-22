@@ -10,11 +10,11 @@ type ContextType = ReturnType<typeof useTodo>;
 const TodoContext = createContext<ContextType | null>(null);
 
 function TodoProvider ({children}: Props) {
-    const [todoList, addTask, updateTask, deleteTask] = useTodo();
-    const memoizedTodo = useMemo<ContextType>(() => [todoList, addTask, updateTask, deleteTask], [todoList]);
+    const todoState = useTodo();
+    const memoizedTodoState = useMemo<ContextType>(() => todoState, [todoState.todoList]);
 
     return (
-        <TodoContext value={memoizedTodo}>
+        <TodoContext value={memoizedTodoState}>
             {children}
         </TodoContext>
     )

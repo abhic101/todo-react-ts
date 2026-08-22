@@ -91,13 +91,17 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
     {/* Username input group: label, input field and error message */}
                 <div className={'dialog-input-group ' + styles["update-input-group"]}>
 
-                    {errors.newUsername? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.newUsername.message}
-                    </p>
-                    )  : <></>}
+                    <div className={`dialog-input-label-error`} >
 
-                    <p className={'dialog-input-label ' + styles["update-input-label"]}>New Username</p>
+                        <p className={'dialog-input-label ' + styles["update-input-label"]}>New Username</p>
+
+                        {errors.newUsername? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.newUsername.message}
+                        </p>
+                        )  : <></>}
+
+                    </div>
                     
                     <input {...usernameRest} onChange={(e) => {
                         rhfUsernameOnchange(e);
@@ -108,13 +112,17 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
     {/* Password input group: label, input field and error message */}
                 <div className={'dialog-input-group ' + styles["update-input-group"]}>
 
-                    {errors.password ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.password.message}
-                    </p>
-                    )  : <></>}
+                    <div className={`dialog-input-label-error`} >
 
-                    <p className={'dialog-input-label ' + styles["update-input-label"]}>Password</p>
+                        <p className={'dialog-input-label ' + styles["update-input-label"]}>Password</p>
+
+                        {errors.password ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.password.message}
+                        </p>
+                        )  : <></>}
+
+                    </div>
 
                     <input type="password" {...register('password')} className={'dialog-text-input ' + styles["text-input"]} style={borderColorOnError('password')} placeholder='Enter your password' disabled={isSubmitting}/>
                 </div>

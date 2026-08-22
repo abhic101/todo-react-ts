@@ -14,3 +14,4 @@ export { default as ChangeUsernameDialog } from './settings/changeUsername/Chang
 export { default as ChangePasswordDialog } from './settings/changePassword/ChangePasswordDialog';
 export { default as ConfirmDialog} from './confirmDialog/ConfirmDialog'
 export { default as RenderConfirmDialog } from './confirmDialog/RenderConfirmDialog';
+export { default as Loader } from './loader/Loader';

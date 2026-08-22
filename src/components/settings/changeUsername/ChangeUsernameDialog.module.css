@@ -4,6 +4,9 @@
 }
 
 .update-root {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     width: 350px;
 }
 
@@ -21,7 +24,7 @@
 }
 
 .update-logo-container {
-    margin-bottom: 70px;
+    margin-bottom: 50px;
 }
 
 .update-logo {
@@ -124,6 +127,14 @@
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
+}
+
+@media (--sm) {
+    .update-root {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }
 
 @keyframes rotation {

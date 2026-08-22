@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ModalData } from '../index.componentTypes';
 import { TodoProvider} from '@context';
 import TaskList from './taskList/TaskList';
-import { TbReportMedical as AddTaskIcon } from "react-icons/tb";
+import { MdAssignmentAdd as AddTaskIcon } from "react-icons/md";
 import ErrorBoundary from './ErrorBoundary';
 import styles from './TodoList.module.css'
 
@@ -32,4 +32,4 @@ function TodoList() {
     )
 }
 
-export default TodoList; 
+export default TodoList;

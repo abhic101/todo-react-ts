@@ -30,7 +30,11 @@ function useAuth() {
         authAPI.get('/me').then((res) => {
             setUser(res.data.user);
         }).catch((err) => {
-            handleAxiosErrors(err);
+            if (isAxiosError(err)) {
+                if (err.response) return;
+                console.log("Request Error Code: " + err.request?.status);
+                console.error('Error Details: ', err);
+            }
         })
     }, []);
 

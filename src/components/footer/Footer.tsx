@@ -14,9 +14,11 @@ function Footer() {
     return (
         <footer>
             <div className={styles["footer-main"]}>
-                <FooterCard title={'Socials'} list={socials} />
-                <FooterCard title={'Contact Us'} list={contacts} />
-                <div className={styles["author"]}>Made By Drago :)</div>
+                <div className={styles['vertical-group']} >
+                    <FooterCard title={'Socials'} list={socials} />
+                    <FooterCard title={'Contact Us'} list={contacts} />
+                </div>
+                <div className={styles["author"]}>Made by Drago</div>
             </div>
         </footer>
     )

@@ -1,8 +1,10 @@
-import { useState, useEffect, type MouseEvent } from 'react';
+import { useState, useEffect, type MouseEvent, useMemo } from 'react';
 import { useAuthContext } from '@hooks';
 import { ActiveModalRenderer, RenderConfirmDialog } from '@components';
+import { AccountProvider } from '@context';
 import { ModalData } from '../index.componentTypes';
-import { loggedInNavLinks, loggedOutNavLinks, type NavLink} from './navbar.data';
+import { userNavLinks, guestNavLinks, type NavLink} from './navbar.data';
+import { FaExclamationTriangle as WarningIcon } from "react-icons/fa";
 import styles from './Navbar.module.css';
 
 type AvailableDialogs = ModalData.AvailableDialogs;
@@ -12,8 +14,10 @@ type AvailableDialogs = ModalData.AvailableDialogs;
 /** Statefull component. Depends on authContext's 'user' state */
 function Navbar() {
     const [user, , , logout] = useAuthContext();
-    const [currentNavLinks, setCurrentNavLinks] = useState(loggedOutNavLinks);
+    const [currentNavLinks, setCurrentNavLinks] = useState(guestNavLinks);
     const [showConfirm, setShowConfirm] = useState<string | null>(null);
+    const memoizedUserNavLinks = useMemo(() => userNavLinks, []);
+    const memoizedGuestNavLinks = useMemo(() => guestNavLinks, []);
 
     // Dialog box state
     const [ activeDialog, setActiveDialog ] = useState<AvailableDialogs>(null);
@@ -21,9 +25,9 @@ function Navbar() {
     // Set which navlinks group to render
     useEffect(() => {
         if (user?.userId !== 'guest') {
-            setCurrentNavLinks(structuredClone(loggedInNavLinks))
+            setCurrentNavLinks(memoizedUserNavLinks)
         } else {
-            setCurrentNavLinks(structuredClone(loggedOutNavLinks));
+            setCurrentNavLinks(memoizedGuestNavLinks);
         }
     }, [user])
 
@@ -43,17 +47,25 @@ function Navbar() {
     
     return (
         <nav>
-            <div className={styles['navbar-message']}>
-                <span className={styles.temp}>
-                    <span className={styles["navbar-message-welcome"]}>Welcome,&nbsp;</span>
-                    <span className={styles['navbar-message-firstname']}>{user.firstname} !</span>
+            <div className={styles['navbar-messages']}>
+                <span className={styles['navbar-message']}>
+                    <span className={styles["message-welcome"]}>Welcome,&nbsp;</span>
+                    <span className={styles['message-firstname']}>{user.firstname} !</span>
                 </span>
+                {user.userId==='guest' ? 
+                    <span className={`${styles['navbar-message']} ${styles['warning-container']}`}>
+                        <span className={styles['warning-icon']}>
+                            <WarningIcon />
+                        </span>
+                        <span className={styles["warning-message"]} >
+                            Log in to save list into server
+                        </span>
+                    </span>
+                    :
+                    null
+                }
             </div> 
-            {/* <div className={styles['theme-container']}>
-                <span className={styles["theme"]}>
-                    &#128262;
-                </span>
-            </div> */}
+
             <div className={styles['navlink-container']}>
                 {currentNavLinks?.map((navLink) => {
                     return (
@@ -63,16 +75,18 @@ function Navbar() {
                     )
                 })}
             </div>
-            {activeDialog ? (
-                <ActiveModalRenderer activeDialog={activeDialog} setActiveDialog={setActiveDialog} />
-            ) : <></>}
+            <AccountProvider>
+                {activeDialog ? (
+                    <ActiveModalRenderer activeDialog={activeDialog} setActiveDialog={setActiveDialog} />
+                ) : <></>}
+            </AccountProvider>
             {showConfirm && <RenderConfirmDialog
                 message={showConfirm}
                 onCancel={() => {setShowConfirm(null)}}
                 onClose={() => {setShowConfirm(null)}}
                 onConfirm={() => {logout()}}
             />}
-            </nav>
+        </nav>
     )
 }
 

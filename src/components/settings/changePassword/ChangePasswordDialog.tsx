@@ -80,13 +80,17 @@ function ChangePasswordDialog({changeDialog}: Props) {
     {/* Current input group: label, input field and error message */}
                 <div className={'dialog-input-group ' + styles["update-input-group"]}>
 
-                    {errors.currentPassword? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.currentPassword.message}
-                    </p>
-                    )  : <></>}
+                    <div className={`dialog-input-label-error`} >
 
-                    <p className={'dialog-input-label ' + styles["update-input-label"]}>Current Password</p>
+                        <p className={'dialog-input-label ' + styles["update-input-label"]}>Current Password</p>
+
+                        {errors.currentPassword? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.currentPassword.message}
+                        </p>
+                        )  : <></>}
+
+                    </div>
                     
                     <input {...register('currentPassword')} type='password'
                      className={'dialog-text-input ' + styles["text-input"]} style={borderColorOnError('currentPassword')}  placeholder='Enter current password' disabled={isSubmitting} autoFocus />
@@ -94,18 +98,21 @@ function ChangePasswordDialog({changeDialog}: Props) {
 
     {/* New Password input group: label, input field and error message */}
                 <div className={'dialog-input-group ' + styles['input-group']}>
+                    <div className={`dialog-input-label-error`} >
 
-                    {errors.newPassword ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.newPassword.message}
-                    </p>
-                    )  : errors.confirmNewPassword ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.confirmNewPassword.message}
-                    </p>
-                    )  : <></>}
+                        <p className={`dialog-input-label ${styles['input-label']} ${styles['password-input-label']}`}>New Password</p>
 
-                    <p className={`dialog-input-label ${styles['input-label']} ${styles['password-input-label']}`}>New Password</p>
+                        {errors.newPassword ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.newPassword.message}
+                        </p>
+                        )  : errors.confirmNewPassword ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.confirmNewPassword.message}
+                        </p>
+                        )  : <></>}
+                    
+                    </div>
 
                     <div className={styles['multiple-text-input-container']} style={borderColorOnError('newPassword')}>
                         

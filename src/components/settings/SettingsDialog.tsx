@@ -75,7 +75,7 @@ function SettingsDialog({onClose, changeDialog}: Props) {
                 </p>
             </div>
 
-            { httpNotif ? (
+            {httpNotif ? (
                 <div key={httpNotif} className={'dialog-http-notif-container ' + styles['http-notif-container']}>
                     <div className={httpNotif === 'Profile Updated' ? 'dialog-http-notif-message-success' : 'dialog-http-notif-message-failure'}>{httpNotif}</div>
                 </div>
@@ -86,42 +86,60 @@ function SettingsDialog({onClose, changeDialog}: Props) {
 
     {/* fistname input group */}
                 <div className={'dialog-input-group ' + styles['input-group']}>
-    
-                    {errors.firstname ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.firstname.message}
-                    </p>
-                    )  : <></>}
 
-                    <p className={'dialog-input-label ' + styles['input-label']}>Firstname:</p>
-                    <input {...register('firstname', {value: profile?.firstname})} className={'dialog-text-input ' + styles['text-input']} disabled={isSubmitting || !editField.firstname} placeholder="Firstname" autoFocus/>
-                    <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, firstname:!prev.firstname}));setFocus('firstname')}}>
-                        {editField.firstname ? <NotEditIcon onClick={(e) => {e.preventDefault;setValue('firstname', profile.firstname)}}/> : <EditIcon/>}
-                    </button>
+                    <div className={`dialog-input-label-error`} >
+                        <p className={'dialog-input-label ' + styles['input-label']}>Firstname</p>
+                        {errors.firstname ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.firstname.message}
+                        </p>
+                        )  : <></>}
+                    </div>
+
+                    <div className={styles['input-group-interactibles']}>
+                        <input {...register('firstname', {value: profile?.firstname})} className={'dialog-text-input ' + styles['text-input']} disabled={isSubmitting || !editField.firstname} placeholder="Firstname" autoFocus/>
+
+                        <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, firstname:!prev.firstname}));setFocus('firstname')}}>
+                            {editField.firstname ? <NotEditIcon onClick={(e) => {e.preventDefault;setValue('firstname', profile.firstname)}}/> : <EditIcon/>}
+                        </button>
+                    </div>
+
+                    {(editField.firstname) && (
+                        <button type='submit' className={styles['save-button']} ><SaveIcon className={styles['save-icon']}/> <span>Save </span></button>
+                    )}
                     
                 </div>
 
     {/* lastname input group */}                
                 <div className={'dialog-input-group ' + styles['input-group']}>
-    
-                    {errors.lastname ? (
-                        <p className={'dialog-input-error-message ' + styles['input-error-message']}>
-                        {errors.lastname.message}
-                    </p>
-                    )  : <></>}
 
-                    <p className={'dialog-input-label ' + styles['input-label']}>Lastname:</p>
-                    <input {...register('lastname', {value: profile?.lastname || ''})} className={'dialog-text-input ' + styles['text-input']} disabled={isSubmitting || !editField.lastname} placeholder="Lastname" />
-                    <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, lastname: !editField.lastname}));setFocus('lastname')}}>
-                        {editField.lastname ? <NotEditIcon onClick={(e) => {e.preventDefault;setValue('lastname', profile.lastname)}}/> : <EditIcon/>}
-                    </button>
+                    <div className={`dialog-input-label-error`} >
+    
+                        <p className={'dialog-input-label ' + styles['input-label']}>Lastname</p>
+
+                        {errors.lastname ? (
+                            <p className={'dialog-input-error-message ' + styles['input-error-message']}>
+                            {errors.lastname.message}
+                        </p>
+                        )  : <></>}
+
+                    </div>
+                    <div className={styles['input-group-interactibles']}>
+                        <input {...register('lastname', {value: profile?.lastname || ''})} className={'dialog-text-input ' + styles['text-input']} disabled={isSubmitting || !editField.lastname} placeholder="Lastname" />
+                        <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, lastname: !editField.lastname}));setFocus('lastname')}}>
+                            {editField.lastname ? <NotEditIcon onClick={(e) => {e.preventDefault;setValue('lastname', profile.lastname)}}/> : <EditIcon/>}
+                        </button>
+                    </div>
+                    {(editField.lastname) && (
+                        <button type='submit' className={styles['save-button']} ><SaveIcon className={styles['save-icon']}/> <span>Save </span></button>
+                    )}
                         
                 </div>
-                {(editField.firstname || editField.lastname) && (
+                {/* {(editField.firstname || editField.lastname) && (
                     <button type='submit' className={styles['save-button']} ><SaveIcon className={styles['save-icon']}/> <span>Save </span></button>
-                )}
+                )} */}
                 
-                <div className={'dialog-input-group ' + styles['prompt-group'] + ' ' + styles['input-group']}>
+                <div className={'dialog-input-group ' + ' ' + styles['input-group'] + ' ' + styles['prompt-group']}>
     
                     <p className={'dialog-input-label ' + styles['input-label']}>Username:</p>
                     <button className={styles['prompt-button']} onClick={(e) => {e.preventDefault();changeDialog('username-updator')}}>

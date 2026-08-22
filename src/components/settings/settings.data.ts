@@ -11,7 +11,7 @@ const profileUpdateSchema = z.object({
 
 const passwordUpdateSchema = z.object({
     currentPassword: z.string()
-        .min(1, 'Please enter password')
+        .min(1, 'Enter password')
         .max(128, 'Password too long'),
     newPassword: z.string()
         .min(8, "Password too short")

@@ -1,8 +1,7 @@
 nav {
     display: flex;
-    align-items: center;
     justify-content: right;
-    color: white;
+    color: rgba(255, 255, 255, 0.8);
     padding: 10px 20px;
     /* box-shadow: 0 3px 7px black,
     inset 0 6px 17px 0 rgba(0, 0, 0, 0.3);
@@ -18,20 +17,34 @@ nav {
     z-index: 1;
 }
 
-.navbar-message {
-    /* margin-left: 20px; */
+.navbar-messages {
     flex: 1;
+    display: flex;
+    align-items: center;
 }
 
-.temp {
+.navbar-message {
+    display: inline-flex;
+    align-items: center;
     padding: 8px 15px;
+    margin-right: 20px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 7px;
     background: rgba(255, 255, 255, 0.1);
 }
 
-.navbar-message-firstname {
+.message-firstname {
     font-weight: 700;
+}
+.warning-container {
+    background: rgba(255, 238, 1, 0);
+}
+.warning-message {
+    color: rgb(161, 157, 99);
+}
+.warning-icon {
+    color: rgb(161, 157, 99);
+    padding: 3px 5px 0 0;
 }
 
 .theme-container {
