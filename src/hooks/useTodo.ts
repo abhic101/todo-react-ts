@@ -63,11 +63,18 @@ function useTodoList() {
     }, [todoList])
 
     useEffect(() => {
-        return () => {
+        const saveGuestTodos = () => {
             if (user.userId === 'guest') {
-                localStorage.setItem('todoList', JSON.stringify(todoListRef.current));
+            localStorage.setItem('todoList', JSON.stringify(todoListRef.current));
             }
-        }
+        };
+
+        window.addEventListener('beforeunload', saveGuestTodos);
+
+        return () => {
+            window.removeEventListener('beforeunload', saveGuestTodos);
+            saveGuestTodos();
+        };
     }, [user.userId]);
 
     // Todo error handler for this hook

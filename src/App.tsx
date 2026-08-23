@@ -1,6 +1,8 @@
 import { memo } from 'react';
-import { Footer, Header, Navbar, TodoList } from '@components';
+import { Footer, Header, NavbarDesktopLayout, NavbarMobileLayout, TodoList } from '@components';
 import { AuthProvider } from '@context';
+import { useMediaQuery } from '@hooks';
+import { BREAKPOINTS } from './styles/breakpoints';
 
 // Memoizing static components
 const MemoizedHeader = memo(Header);
@@ -12,7 +14,7 @@ function App() {
         <div id="page-wrapper">
             <MemoizedHeader />
             <AuthProvider>
-                <Navbar />
+                {useMediaQuery(BREAKPOINTS.md) ? <NavbarMobileLayout /> : <NavbarDesktopLayout />}
                 <TodoList />
             </AuthProvider>
             <MemoizedFooter />

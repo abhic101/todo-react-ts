@@ -63,13 +63,22 @@
 
 @media (--md) {
     .header-main {
-        justify-content: space-between;
+        justify-content: center;
+    }
+    .slogan-container {
+        display: none;
     }
 }
 
 @media (--sm) {
-    .header-main {
-        justify-content: center;
+    .logo-container {
+        span {
+            display: none;
+        }
+
+        .logo {
+            width: 60px;
+        }
     }
     .slogan-container {
         display: none;

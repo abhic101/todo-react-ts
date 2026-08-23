@@ -1,26 +1,13 @@
-nav {
+.navbar-main {
     display: flex;
-    justify-content: right;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 10px 20px;
-    /* box-shadow: 0 3px 7px black,
-    inset 0 6px 17px 0 rgba(0, 0, 0, 0.3);
-    background: linear-gradient(to bottom right,
-    rgba(12, 198, 255, 0.1) 10%,
-    rgba(2, 103, 255, 0.1) 80%
-    );
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    backdrop-filter: blur(10px); */
-    position: sticky;
-    top: 0;
-    z-index: 1;
+    flex-direction: row;
 }
 
 .navbar-messages {
     flex: 1;
     display: flex;
     align-items: center;
+    justify-content: left;
 }
 
 .navbar-message {
@@ -31,6 +18,7 @@ nav {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 7px;
     background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .message-firstname {
@@ -38,6 +26,7 @@ nav {
 }
 .warning-container {
     background: rgba(255, 238, 1, 0);
+    backdrop-filter: blur(10px);
 }
 .warning-message {
     color: rgb(161, 157, 99);
@@ -74,6 +63,7 @@ nav {
     border-radius: 7px;
     background: rgba(255, 255, 255, 0.1);
     transition: all .2s;
+    backdrop-filter: blur(10px);
 }
 .navlink:hover {
     background: rgba(255, 255, 255, 0.2);
@@ -91,4 +81,46 @@ nav {
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
     scale: 1.1;
+}
+
+@media (--md) {
+
+    .navbar-messages {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        
+    }
+
+    .navbar-message {
+        background: transparent;
+        text-align: left;
+        padding: 0 0 0 0;
+        margin: 60px 10px 0 10px;
+        border: none;
+        backdrop-filter: none;
+    }
+
+    .navlink-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: calc(100% - 35.8px);
+        margin-top: 20px;
+    }
+
+    .warning-container {
+        display: none;
+    }
+
+    .navlink {
+        height: fit-content;
+        width: 100%;
+        margin: 10px 0 0 0;
+        backdrop-filter: none;
+    }
+
+    .navlink:hover {
+        scale: 1;
+    }
 }

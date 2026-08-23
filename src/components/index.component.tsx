@@ -1,6 +1,8 @@
 export { default as Footer } from './footer/Footer';
 export { default as Header } from './header/Header';
 export { default as Navbar } from './navbar/Navbar';
+export { default as NavbarDesktopLayout } from './navbar/NavbarDesktopLayout';
+export { default as NavbarMobileLayout } from './navbar/NavbarMobileLayout';
 export { default as CenterModal } from './centerModal/CenterModal';
 export { default as ActiveModalRenderer } from './modalRenderer/ActiveModalRenderer';
 export { default as LoginDialog } from './login/LoginDialog.v2';

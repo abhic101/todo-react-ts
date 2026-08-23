@@ -87,9 +87,9 @@ function SignupDialog ({onClose, changeDialog}: Props) {
                 </p>
             </div>
 
-            { !httpNotif ? (
+            { httpNotif ? (
                 <div className={'dialog-http-notif-container ' + styles['http-notif-container']}>
-                    <div className={httpNotif === 'Account Created Successfully' ? 'dialog-http-notif-message-success' : 'dialog-http-notif-message-failure'}>{"Failure Message"}</div>
+                    <div className={httpNotif === 'Account Created Successfully' ? 'dialog-http-notif-message-success' : 'dialog-http-notif-message-failure'}>{httpNotif}</div>
                 </div>
             ) : (<></>)}
 

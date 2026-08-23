@@ -1,0 +1,13 @@
+.desktop-navbar {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.desktop-navbar-main {
+    display: flex;
+    flex-direction: row;
+    
+}

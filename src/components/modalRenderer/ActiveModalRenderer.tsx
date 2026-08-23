@@ -4,18 +4,19 @@ import { createPortal } from 'react-dom';
 
 import { type AvailableDialogs } from './modalRenderer.data';
 
-const DELAY_TIMER = 100;    // In milliseconds
+const DELAY_TIMER = 150;    // In milliseconds
 
 interface Props {
     activeDialog: AvailableDialogs;
     setActiveDialog: Dispatch<SetStateAction<AvailableDialogs>>;
+    onClose?: () => void;
     dialogProps?: any;
 }
 
 /**
  * @returns Dialog component to be rendered based on whats currently active
  */
-function ActiveModalRender({activeDialog, setActiveDialog, dialogProps}: Props) {
+function ActiveModalRender({activeDialog, setActiveDialog, onClose, dialogProps}: Props) {
     const [closeRequested, setCloseRequested] = useState(true);
     const onCloseWrapperForDelay = useRef(() => {});
     const changeDialogWrapperForDelay = useRef((dialog: AvailableDialogs) => {dialog});
@@ -27,7 +28,13 @@ function ActiveModalRender({activeDialog, setActiveDialog, dialogProps}: Props) 
 
         onCloseWrapperForDelay.current = () => {
             setCloseRequested(true);
-            onCloseWrapperTimerId = setTimeout(() => {setActiveDialog(null)}, DELAY_TIMER)
+            onCloseWrapperTimerId = setTimeout(() => {
+                if (onClose) {
+                    onClose();
+                } else {
+                    setActiveDialog(null);
+                }
+            }, DELAY_TIMER)
         };
 
         changeDialogWrapperForDelay.current = (dialog: AvailableDialogs) => {

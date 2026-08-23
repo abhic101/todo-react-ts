@@ -5,14 +5,20 @@ import { AccountProvider } from '@context';
 import { ModalData } from '../index.componentTypes';
 import { userNavLinks, guestNavLinks, type NavLink} from './navbar.data';
 import { FaExclamationTriangle as WarningIcon } from "react-icons/fa";
+
 import styles from './Navbar.module.css';
 
 type AvailableDialogs = ModalData.AvailableDialogs;
 
+interface Props {
+    closeNavbar: () => void;
+    className: string;
+}
+
 // --------------use SIGNUP and SETTING DIALOGS in this component ----------------
 
 /** Statefull component. Depends on authContext's 'user' state */
-function Navbar() {
+function Navbar({closeNavbar, className}: Props) {
     const [user, , , logout] = useAuthContext();
     const [currentNavLinks, setCurrentNavLinks] = useState(guestNavLinks);
     const [showConfirm, setShowConfirm] = useState<string | null>(null);
@@ -24,6 +30,7 @@ function Navbar() {
 
     // Set which navlinks group to render
     useEffect(() => {
+        setShowConfirm(null);
         if (user?.userId !== 'guest') {
             setCurrentNavLinks(memoizedUserNavLinks)
         } else {
@@ -35,7 +42,7 @@ function Navbar() {
      * @param e ClickEvent
      * @param navLink NavLink on which e is triggered (clicked)
      */
-    function handleOnClick(e: MouseEvent<HTMLAnchorElement>, navLink: NavLink) {
+    async function handleOnClick(e: MouseEvent<HTMLAnchorElement>, navLink: NavLink) {
         e.preventDefault();
         if (navLink.name === 'logout') {
             setShowConfirm('Are you sure to logout?');
@@ -44,9 +51,14 @@ function Navbar() {
             setActiveDialog(navLink.name as keyof AvailableDialogs);
         }
     }
+
+    function dialogOnClose() {
+        setActiveDialog(null);
+        closeNavbar();
+    }
     
     return (
-        <nav>
+        <div className={className} onClick={(e) => {e.stopPropagation();}}>
             <div className={styles['navbar-messages']}>
                 <span className={styles['navbar-message']}>
                     <span className={styles["message-welcome"]}>Welcome,&nbsp;</span>
@@ -77,16 +89,16 @@ function Navbar() {
             </div>
             <AccountProvider>
                 {activeDialog ? (
-                    <ActiveModalRenderer activeDialog={activeDialog} setActiveDialog={setActiveDialog} />
+                    <ActiveModalRenderer activeDialog={activeDialog} setActiveDialog={setActiveDialog} onClose={dialogOnClose}/>
                 ) : <></>}
             </AccountProvider>
             {showConfirm && <RenderConfirmDialog
                 message={showConfirm}
-                onCancel={() => {setShowConfirm(null)}}
-                onClose={() => {setShowConfirm(null)}}
-                onConfirm={() => {logout()}}
+                onCancel={() => {setShowConfirm(null);closeNavbar()}}
+                onClose={() => {setShowConfirm(null);closeNavbar()}}
+                onConfirm={() => {logout();closeNavbar()}}
             />}
-        </nav>
+        </div>
     )
 }
 

@@ -76,6 +76,12 @@ main {
     transition: all .1s;
 }
 
+@media (--md) {
+    main {
+        margin-top: 30px;
+    }
+}
+
 @keyframes bounceSquish {
   0%, 100% {
     transform: translateY(0) scaleY(1) scaleX(1);

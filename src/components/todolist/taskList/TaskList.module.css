@@ -4,7 +4,7 @@
     justify-content: center;
     width: 70vw;
     margin: 0;
-    height: calc(64vh + 30px);
+    height: calc(64vh + 50px);
 
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
@@ -39,6 +39,9 @@
 }
 
 .task-list-table {
+    display:grid;
+    grid: auto-flow dense / 50% 50%;
+    grid-auto-rows: min-content;
     height: 64vh;
     overflow-y: scroll;
     scrollbar-width: thin;
@@ -50,6 +53,8 @@
 
 .task-list-item {
     list-style: none;
+    display: inline;
+    height: fit-content;
     padding: 5px 15px;
     border: 1px solid transparent;
     transition: background-color .3s;
@@ -144,6 +149,8 @@
     margin: 0;
     font-size: 20px;
     cursor: pointer;
+    overflow-x: auto;
+    overflow-wrap: break-word;
 }
 .task-details {
     padding: 0;
@@ -151,6 +158,8 @@
     width: 75%;
     text-align: justify;
     color: rgb(179, 193, 208);
+    overflow-x: auto;
+    overflow-wrap: break-word;
 }
 
 .button {
@@ -225,4 +234,22 @@
         }
     }
 
+}
+
+@media (max-width: 1920px) {
+    .task-list-table {
+        grid: auto-flow dense / 100%;
+        grid-auto-rows: min-content;
+    }
+}
+
+@media (--sm) {
+    .task-list-container {
+        width: 95%;
+        height: calc(80vh + 50px);
+    }
+    .task-list-table {
+        height: 80vh;
+        grid-auto-rows: min-content;
+    }
 }
