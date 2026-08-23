@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {CenterModal, ConfirmDialog} from '@components'
 
 interface Props {
@@ -35,11 +36,11 @@ function RenderConfirmDialog({message, onConfirm, onCancel, onClose}: Props) {
     }, [])
     if (!message) return null;
 
-    return (
+    return createPortal(
         <CenterModal closeRequested={closeRequested} onClose={onCloseDelayWrapper.current}>
             <ConfirmDialog message={message} onConfirm={onConfirm} onCancel={onCancelDelayWrapper.current} onClose={onCloseDelayWrapper.current}/>
         </CenterModal>
-    ) 
+    , document.body);
 }
 
 export default RenderConfirmDialog;

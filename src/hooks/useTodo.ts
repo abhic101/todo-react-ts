@@ -42,6 +42,7 @@ function useTodoList() {
         todoAPI.get<{message: string, tasks: TodoTask[]}>('/').then((res) => {
             if (todoList.length !== 0 && todoList[0]._id === '1') {
                 setUnsavedTodoList(todoList);
+                console.log('useEffect of useTodo call reached to show dialog');
                 setShowSaveListDialog(true);
             }
             setTodoList(res.data.tasks.sort((a, b) => {b;return a.status ? 1 : -1}));
@@ -138,8 +139,9 @@ function useTodoList() {
     async function mergeUnsavedList() {
         try {
             if (user.userId === 'guest') return;
-            // await todoAPI.post('/', {todoList: todoList});
-            setTodoList([...todoList, ...unsavedTodoList]);
+            const res = await todoAPI.post('/batch', {tasks: unsavedTodoList});
+            
+            setTodoList([...todoList, ...res.data.tasks]);
             setUnsavedTodoList([]);
             setShowSaveListDialog(false);
             localStorage.removeItem('todoList');

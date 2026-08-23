@@ -94,7 +94,7 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
                 <></>
             }
             {showSaveListDialog ? (
-                <RenderConfirmDialog message={"Merge unsaved todo list to your account?"} onConfirm={mergeUnsavedList} onClose={() => {setShowSaveListDialog(false)}} onCancel={() => {setShowSaveListDialog(false)}} />
+                <RenderConfirmDialog message={"Some unsaved tasks are found in the system. Save them to account?"} onConfirm={mergeUnsavedList} onClose={() => {console.log('called close');setShowSaveListDialog(false)}} onCancel={() => {console.log('called cancel');setShowSaveListDialog(false)}} />
                 ) :
                 null
             }

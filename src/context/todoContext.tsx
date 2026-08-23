@@ -11,7 +11,7 @@ const TodoContext = createContext<ContextType | null>(null);
 
 function TodoProvider ({children}: Props) {
     const todoState = useTodo();
-    const memoizedTodoState = useMemo<ContextType>(() => todoState, [todoState.todoList]);
+    const memoizedTodoState = useMemo<ContextType>(() => todoState, [todoState.todoList, todoState.showSaveListDialog]);
 
     return (
         <TodoContext value={memoizedTodoState}>

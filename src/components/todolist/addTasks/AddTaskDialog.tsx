@@ -111,7 +111,7 @@ function AddTaskDialog({task, onClose}: Props) {
                     :
                     <div className={styles['button-group']}>
 
-                        <button className={styles["cancel-button"]} onClick={(e)=>{e.preventDefault();onClose()}} disabled={isSubmitting}>
+                        <button className={styles["cancel-button"]} type="button" onClick={(e)=>{e.preventDefault();onClose()}} disabled={isSubmitting}>
                             <span>
                                 <span className={styles['close-icon']} ><CloseIcon /></span>
                                 <span className={styles['button-label']}> Discard</span>
