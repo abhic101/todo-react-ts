@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 
 import { type AvailableDialogs } from './modalRenderer.data';
 
-const DELAY_TIMER = 150;    // In milliseconds
+const DELAY_TIMER = 200;    // In milliseconds
 
 interface Props {
     activeDialog: AvailableDialogs;
