@@ -47,7 +47,7 @@ function CenterModal({closeRequested, onClose, children}: Props) {
     // Use react portal to render this component as child of dom.body
     return (
         <div className={getClassName('overlay')} onClick={(e) => {e.stopPropagation()}}>
-            <RemoveScroll className={styles['panel-container']}>
+            <div className={styles['panel-container']}>
 
                     <FocusScope.Root trapped loop asChild>
                         <div className={getClassName('panel')} onClick={(e) => e.stopPropagation()}>
@@ -64,7 +64,7 @@ function CenterModal({closeRequested, onClose, children}: Props) {
                             </ErrorBoundary>
                         </div>
                     </FocusScope.Root>
-            </RemoveScroll>
+            </div>
         </div>
     )
 }
