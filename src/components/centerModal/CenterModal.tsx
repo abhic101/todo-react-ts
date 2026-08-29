@@ -1,7 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import ErrorBoundary from './ErrorBoundary'
 import * as FocusScope from '@radix-ui/react-focus-scope';
-import { RemoveScroll } from 'react-remove-scroll';
 import styles from './CenterModal.module.css'
 
 const BOUNDARY_ERROR_TIMEOUT = 2000;
