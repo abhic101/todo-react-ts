@@ -24,10 +24,12 @@ const defaultUser = {
 }
 
 function useAuth() {
-    const [user, setUser] = useState<User>(defaultUser);
+    const [user, setUser] = useState<User>(() => defaultUser);
+    const [hasUserChanged, setHasUserChanged] = useState<boolean>(true);
 
     useEffect(() => {
         authAPI.get('/me').then((res) => {
+            setHasUserChanged(true);
             setUser(res.data.user);
         }).catch((err) => {
             if (isAxiosError(err)) {
@@ -52,7 +54,9 @@ function useAuth() {
                 username,
                 password
             });
+            setHasUserChanged(true);
             setUser(res.data.user);
+            
             return 201;
         } catch(err: any) {
             if(isAxiosError(err)) {
@@ -70,7 +74,7 @@ function useAuth() {
 
     async function logout() {
         try {
-            await authAPI.post('/logout');
+            authAPI.post('/logout');
             setUser({...defaultUser});
         } catch(err) {
             handleAxiosErrors(err);
@@ -106,7 +110,7 @@ function useAuth() {
     }
 
 
-    return [user, setUser, login, logout, signup, checkUsername] as const;
+    return {user, hasUserChanged, setUser, setHasUserChanged, login, logout, signup, checkUsername} as const;
 }
 
 export default useAuth;

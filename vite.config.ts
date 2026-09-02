@@ -19,5 +19,25 @@ export default defineConfig({
             '@api': path.resolve(__dirname, './src/apis/index.api')
         }
     },
-    envDir : './src/config'
+    envDir : './src/config',
+    build: {
+        rolldownOptions: {
+            output: {
+                codeSplitting: {
+                    groups: [
+                        {
+                        name: 'react-vendor',
+                        test: /node_modules[\\/](?:react|react-dom)[\\/]/,
+                        priority: 30,
+                        },
+                        {
+                        name: 'tiptap-vendor',
+                        test: /node_modules[\\/]@tiptap[\\/]/,
+                        priority: 20,
+                        }
+                    ]
+                }
+            }
+        }
+    }
 })

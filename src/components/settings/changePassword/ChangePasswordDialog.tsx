@@ -29,14 +29,13 @@ function ChangePasswordDialog({changeDialog}: Props) {
         let updateRes: number | undefined;
         setHttpNotif(null);
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         updateRes = await updatePassword(data);
         console.log(updateRes);
         if (!updateRes) {
             setHttpNotif('Unknown Error');
         } else if (updateRes === 200 || updateRes === 201) {
             setHttpNotif('Password Updated. Please login again');
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 500));
             changeDialog('login');
         } else if (updateRes === 401) {
             setHttpNotif('Incorrect Current Password');

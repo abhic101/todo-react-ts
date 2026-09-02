@@ -7,7 +7,7 @@ import { TodoData } from '../components/index.componentTypes'
 type TodoTask = TodoData.TodoTask;
 
 function useTodoList() {
-    const [user, setUser] = useAuthContext();
+    const {user, setUser, setHasUserChanged} = useAuthContext();
     const [todoList, setTodoList] = useState<TodoTask[]>(() => {
         if (user.userId === 'guest') {
             const localListString = localStorage.getItem('todoList');
@@ -19,7 +19,6 @@ function useTodoList() {
     });
     const [unsavedTodoList, setUnsavedTodoList] = useState<TodoTask[]>([]);
     const [showSaveListDialog, setShowSaveListDialog] = useState<boolean>(false);
-    const [isFirstMount, setIsFirstMount] = useState<boolean>(true);
     const todoListRef = useRef<TodoTask[]>(todoList);
 
     // Fetch list on mount or on user change(logout, login)
@@ -34,18 +33,17 @@ function useTodoList() {
             } else {
                 setTodoList([]);
             }
-            setIsFirstMount(false);
+            setHasUserChanged(false);
             return;
         };
-        // Logged in - then fetch from server
-        setIsFirstMount(true);
+
         todoAPI.get<{message: string, tasks: TodoTask[]}>('/').then((res) => {
             if (todoList.length !== 0 && todoList[0]._id === '1') {
                 setUnsavedTodoList(todoList);
-                console.log('useEffect of useTodo call reached to show dialog');
                 setShowSaveListDialog(true);
             }
             setTodoList(res.data.tasks.sort((a, b) => {b;return a.status ? 1 : -1}));
+            setHasUserChanged(false);
         }).catch((err) => {
             if(isAxiosError(err)) {
                 console.log('Status code sent: ', err.response?.status);
@@ -55,7 +53,6 @@ function useTodoList() {
                 console.error('Error Occurred at GetList: ', err);
             }
         })
-        setIsFirstMount(false);
     }, [user.userId]);
 
     useEffect(() => {
@@ -70,7 +67,7 @@ function useTodoList() {
         };
 
         window.addEventListener('beforeunload', saveGuestTodos);
-
+        
         return () => {
             window.removeEventListener('beforeunload', saveGuestTodos);
             saveGuestTodos();
@@ -157,7 +154,7 @@ function useTodoList() {
         }
     }
 
-    return { todoList, isFirstMount, showSaveListDialog, setShowSaveListDialog, addTask, updateTask, deleteTask, mergeUnsavedList };
+    return { todoList, showSaveListDialog, setShowSaveListDialog, addTask, updateTask, deleteTask, mergeUnsavedList };
 }
 
 export default useTodoList;

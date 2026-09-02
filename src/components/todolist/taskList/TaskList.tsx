@@ -1,5 +1,5 @@
 import { useRef, useEffect, type ReactNode, type CSSProperties, type SetStateAction, type Dispatch} from 'react';
-import { useTodoContext, type TodoTask } from '@hooks';
+import { useTodoContext, type TodoTask, useAuthContext } from '@hooks';
 import { ActiveModalRenderer, RenderConfirmDialog, Loader } from '@components';
 import { ModalData } from '../../index.componentTypes';
 import { AiOutlineDelete , AiOutlineEdit } from "react-icons/ai";
@@ -18,12 +18,12 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
     const {
         todoList,
         updateTask,
-        isFirstMount,
         deleteTask,
         showSaveListDialog,
         setShowSaveListDialog,
-        mergeUnsavedList
+        mergeUnsavedList,
     } = useTodoContext();
+    const { hasUserChanged } = useAuthContext();
     const taskRef = useRef<TodoTask>(undefined);
 
     useEffect(() => {
@@ -44,7 +44,7 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
 
     return (
         <div className={styles['task-list-container']}>
-            {isFirstMount ? <Loader/> : <div>
+            {hasUserChanged ? <Loader message={'Loading your tasks...'}/> : <div>
                 { !todoList.length ? 
                     <div className={styles['no-task-container']}>
                         <img className={styles['no-task-image']} src={EmptyIcon} /> <span> No task found </span>

@@ -19,7 +19,7 @@ interface Props {
 
 /** Statefull component. Depends on authContext's 'user' state */
 function Navbar({closeNavbar, className}: Props) {
-    const [user, , , logout] = useAuthContext();
+    const {user, logout} = useAuthContext();
     const [currentNavLinks, setCurrentNavLinks] = useState(guestNavLinks);
     const [showConfirm, setShowConfirm] = useState<string | null>(null);
     const memoizedUserNavLinks = useMemo(() => userNavLinks, []);
@@ -27,6 +27,13 @@ function Navbar({closeNavbar, className}: Props) {
 
     // Dialog box state
     const [ activeDialog, setActiveDialog ] = useState<AvailableDialogs>(null);
+
+    useEffect(() => {
+        let AddTaskDialogTimer = setTimeout(async () => await import('../todolist/addTasks/AddTaskDialog'), 5000);
+        return () => {
+            clearTimeout(AddTaskDialogTimer);
+        }
+    }, []) 
 
     // Set which navlinks group to render
     useEffect(() => {

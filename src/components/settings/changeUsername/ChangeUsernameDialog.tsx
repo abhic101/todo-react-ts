@@ -15,7 +15,7 @@ interface Props {
 
 function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
     const { updateUsername } = useAccountContext();
-    const [ user, , , , , checkUsername] = useAuthContext();
+    const {user, checkUsername} = useAuthContext();
     const {
         register,
         handleSubmit,
@@ -35,7 +35,6 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
             setHttpNotif('New username is same as current');
             return;
         } else {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
             updateRes = await updateUsername(data);
         }
         console.log(updateRes);
@@ -43,7 +42,7 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
             setHttpNotif('Unknown Error');
         } else if (updateRes === 200 || updateRes === 201) {
             setHttpNotif('Username Updated');
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 500));
             setParentNotif && setParentNotif('Username Updated');
             changeDialog('settings');
         } else if (updateRes === 401) {

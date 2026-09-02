@@ -12,7 +12,7 @@ interface Props {
 }
 
 function SignupDialog ({onClose, changeDialog}: Props) {
-    const [ , , , , signup, checkUsername] = useAuthContext();
+    const {signup, checkUsername} = useAuthContext();
     const [ httpNotif, setHttpNotif ] = useState<string | null>();
     const {
         register, handleSubmit, trigger, setFocus, getValues, formState: {errors, isSubmitting, touchedFields}
@@ -30,12 +30,11 @@ function SignupDialog ({onClose, changeDialog}: Props) {
             return;
         };
         setHttpNotif(null);
-        await new Promise(resolve => setTimeout(resolve, 1000));
         const resSignup = await signup(data);
 
         if (resSignup === 200 || resSignup === 201) {
             setHttpNotif('Account Created Successfully');
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             changeDialog();
         } else if (typeof resSignup !== 'number') {
             if (resSignup.statusCode === 409) {

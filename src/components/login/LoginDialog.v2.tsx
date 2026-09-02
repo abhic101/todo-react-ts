@@ -14,7 +14,7 @@ interface Props {
 
 function LoginDialog({onClose, changeDialog}: Props) {
     const [httpNotif, setHttpNotif] = useState<string | null>(null); 
-    const [ , , login] = useAuthContext();
+    const {login} = useAuthContext();
     const {
         register, setFocus, handleSubmit, formState: { errors, isSubmitting }
     } = useForm<FormData>({
@@ -24,7 +24,6 @@ function LoginDialog({onClose, changeDialog}: Props) {
 
     const onSubmit = async (data: FormData) => {
         setHttpNotif(null);
-        await new Promise(resolve=>setTimeout(resolve, 1000));
         
         const resLogin = await login(data.username, data.password);
         if (resLogin === 201) {

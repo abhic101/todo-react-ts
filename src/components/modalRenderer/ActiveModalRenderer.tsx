@@ -1,5 +1,5 @@
-import { CenterModal, LoginDialog, SignupDialog, TaskEditorDialog, SettingsDialog, ChangeUsernameDialog, ChangePasswordDialog } from '@components'
-import { type SetStateAction, type Dispatch, useRef, useEffect, useState } from 'react';
+import { CenterModal, LoginDialog, Loader, SignupDialog, SettingsDialog, ChangeUsernameDialog, ChangePasswordDialog } from '@components'
+import { type SetStateAction, type Dispatch, useRef, useEffect, useState, lazy, Suspense } from 'react';
 import { createPortal } from 'react-dom';
 
 import { type AvailableDialogs } from './modalRenderer.data';
@@ -13,6 +13,9 @@ interface Props {
     dialogProps?: any;
 }
 
+const TaskEditorDialog = lazy(() => import('../todolist/addTasks/AddTaskDialog'));
+
+
 /**
  * @returns Dialog component to be rendered based on whats currently active
  */
@@ -25,6 +28,7 @@ function ActiveModalRender({activeDialog, setActiveDialog, onClose, dialogProps}
         if (activeDialog === null) return;
         setCloseRequested(false);
         let onCloseWrapperTimerId: number, changeDialogWrapperTimerId: number;
+        
 
         onCloseWrapperForDelay.current = () => {
             setCloseRequested(true);
@@ -52,12 +56,14 @@ function ActiveModalRender({activeDialog, setActiveDialog, onClose, dialogProps}
 
     return createPortal(
         <CenterModal closeRequested={closeRequested} onClose={onCloseWrapperForDelay.current}>
-            {activeDialog === 'login' && <LoginDialog onClose={onCloseWrapperForDelay.current} changeDialog={() => changeDialogWrapperForDelay.current('signup')}/>}
-            {activeDialog === 'signup' && <SignupDialog onClose={onCloseWrapperForDelay.current} changeDialog={() => changeDialogWrapperForDelay.current('login')}/>}
-            {activeDialog === 'task-editor' && <TaskEditorDialog onClose={onCloseWrapperForDelay.current} task={dialogProps?.task ? dialogProps.task : undefined }/>}
-            {activeDialog === 'settings' && <SettingsDialog onClose={onCloseWrapperForDelay.current} changeDialog={changeDialogWrapperForDelay.current}/>}
-            {activeDialog === 'username-updator' && <ChangeUsernameDialog changeDialog={changeDialogWrapperForDelay.current} setParentNotif={dialogProps?.setHttpNotif || null}/>}
-            {activeDialog === 'password-updator' && <ChangePasswordDialog changeDialog={changeDialogWrapperForDelay.current} />}
+            <Suspense fallback={<Loader/>}>
+                {activeDialog === 'login' && <LoginDialog onClose={onCloseWrapperForDelay.current} changeDialog={() => changeDialogWrapperForDelay.current('signup')}/>}
+                {activeDialog === 'signup' && <SignupDialog onClose={onCloseWrapperForDelay.current} changeDialog={() => changeDialogWrapperForDelay.current('login')}/>}
+                {activeDialog === 'task-editor' && <TaskEditorDialog onClose={onCloseWrapperForDelay.current} task={dialogProps?.task ? dialogProps.task : undefined }/>}
+                {activeDialog === 'settings' && <SettingsDialog onClose={onCloseWrapperForDelay.current} changeDialog={changeDialogWrapperForDelay.current}/>}
+                {activeDialog === 'username-updator' && <ChangeUsernameDialog changeDialog={changeDialogWrapperForDelay.current} setParentNotif={dialogProps?.setHttpNotif || null}/>}
+                {activeDialog === 'password-updator' && <ChangePasswordDialog changeDialog={changeDialogWrapperForDelay.current} />}
+            </Suspense>
         </CenterModal>
         , document.body
     )

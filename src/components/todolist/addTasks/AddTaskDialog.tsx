@@ -2,7 +2,7 @@ import { useState, type CSSProperties } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTodoContext } from '@hooks';
-import { RichTextEditor } from '@components';
+import RichTextEditor from '../../richTextEditor/RichTextEditor';
 import { FaTimes as CloseIcon,FaPlus as AddIcon, FaRegSave as SaveIcon  } from "react-icons/fa";
 import { addTaskSchema, type FormData } from './addTasks.data'
 import type { TodoTask } from '../todolist.data';
@@ -39,7 +39,7 @@ function AddTaskDialog({task, onClose}: Props) {
         }
         else if (updateRes === 201 || updateRes === 200){
             setHttpNotif('Task Added Successfully');
-            await new Promise((resolve) => {setTimeout(resolve, 1000)})
+            await new Promise((resolve) => {setTimeout(resolve, 500)})
             onClose();
         }
     }

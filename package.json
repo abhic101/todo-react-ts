@@ -8,6 +8,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
+    "build-dev": "tsc -b && vite build --mode development",
     "build": "tsc -b && vite build"
   },
   "dependencies": {
@@ -18,7 +19,6 @@
     "@tiptap/react": "^3.29.2",
     "@tiptap/starter-kit": "^3.29.2",
     "axios": "^1.18.1",
-    "prettier": "^3.9.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.83.0",

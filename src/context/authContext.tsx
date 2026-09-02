@@ -10,7 +10,7 @@ const AuthContext = createContext<ReturnType<typeof useAuth> | null>(null);
 function AuthProvider ({children}: Props) {
     const authState = useAuth();
     
-    const memoizedAuthState = useMemo(() => authState, [authState[0]]);
+    const memoizedAuthState = useMemo(() => authState, [authState.user, authState.hasUserChanged]);
 
     return (
         <AuthContext.Provider value={memoizedAuthState}>

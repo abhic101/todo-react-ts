@@ -24,7 +24,7 @@ function handleError(err: any) {
 
 function useAccount() {
     const [profile, setProfile] = useState<ProfileType | null>(null);
-    const [user, setUser] = useAuthContext();
+    const {user, setUser} = useAuthContext();
 
     useEffect(() => {
         if (user.userId ==='guest') {
