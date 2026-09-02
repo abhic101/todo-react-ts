@@ -56,14 +56,16 @@ function ActiveModalRender({activeDialog, setActiveDialog, onClose, dialogProps}
 
     return createPortal(
         <CenterModal closeRequested={closeRequested} onClose={onCloseWrapperForDelay.current}>
-            <Suspense fallback={<Loader/>}>
+            
                 {activeDialog === 'login' && <LoginDialog onClose={onCloseWrapperForDelay.current} changeDialog={() => changeDialogWrapperForDelay.current('signup')}/>}
                 {activeDialog === 'signup' && <SignupDialog onClose={onCloseWrapperForDelay.current} changeDialog={() => changeDialogWrapperForDelay.current('login')}/>}
-                {activeDialog === 'task-editor' && <TaskEditorDialog onClose={onCloseWrapperForDelay.current} task={dialogProps?.task ? dialogProps.task : undefined }/>}
+                <Suspense fallback={<Loader/>}>
+                    {activeDialog === 'task-editor' && <TaskEditorDialog onClose={onCloseWrapperForDelay.current} task={dialogProps?.task ? dialogProps.task : undefined }/>}
+                </Suspense>
                 {activeDialog === 'settings' && <SettingsDialog onClose={onCloseWrapperForDelay.current} changeDialog={changeDialogWrapperForDelay.current}/>}
                 {activeDialog === 'username-updator' && <ChangeUsernameDialog changeDialog={changeDialogWrapperForDelay.current} setParentNotif={dialogProps?.setHttpNotif || null}/>}
                 {activeDialog === 'password-updator' && <ChangePasswordDialog changeDialog={changeDialogWrapperForDelay.current} />}
-            </Suspense>
+            
         </CenterModal>
         , document.body
     )

@@ -1,7 +1,7 @@
 import { useState, useEffect, type MouseEvent, useMemo } from 'react';
 import { useAuthContext } from '@hooks';
 import { ActiveModalRenderer, RenderConfirmDialog } from '@components';
-import { AccountProvider } from '@context';
+
 import { ModalData } from '../index.componentTypes';
 import { userNavLinks, guestNavLinks, type NavLink} from './navbar.data';
 import { FaExclamationTriangle as WarningIcon } from "react-icons/fa";
@@ -27,13 +27,6 @@ function Navbar({closeNavbar, className}: Props) {
 
     // Dialog box state
     const [ activeDialog, setActiveDialog ] = useState<AvailableDialogs>(null);
-
-    useEffect(() => {
-        let AddTaskDialogTimer = setTimeout(async () => await import('../todolist/addTasks/AddTaskDialog'), 5000);
-        return () => {
-            clearTimeout(AddTaskDialogTimer);
-        }
-    }, []) 
 
     // Set which navlinks group to render
     useEffect(() => {
@@ -94,11 +87,9 @@ function Navbar({closeNavbar, className}: Props) {
                     )
                 })}
             </div>
-            <AccountProvider>
-                {activeDialog ? (
-                    <ActiveModalRenderer activeDialog={activeDialog} setActiveDialog={setActiveDialog} onClose={dialogOnClose}/>
-                ) : <></>}
-            </AccountProvider>
+            {activeDialog ? (
+                <ActiveModalRenderer activeDialog={activeDialog} setActiveDialog={setActiveDialog} onClose={dialogOnClose}/>
+            ) : <></>}
             {showConfirm && <RenderConfirmDialog
                 message={showConfirm}
                 onCancel={() => {setShowConfirm(null);closeNavbar()}}

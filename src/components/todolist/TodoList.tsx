@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ModalData } from '../index.componentTypes';
 import { TodoProvider} from '@context';
 import TaskList from './taskList/TaskList';
@@ -10,6 +10,13 @@ type AvailableDialogs = ModalData.AvailableDialogs;
 
 function TodoList() {
     const [activeDialog, setActiveDialog] = useState<AvailableDialogs>(null);
+
+    useEffect(() => {
+        let AddTaskDialogTimer = setTimeout(async () => await import('../todolist/addTasks/AddTaskDialog'), 5000);
+        return () => {
+            clearTimeout(AddTaskDialogTimer);
+        }
+    }, []) 
 
     return (
         <main>

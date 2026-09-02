@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Footer, Header, NavbarDesktopLayout, NavbarMobileLayout, TodoList } from '@components';
-import { AuthProvider } from '@context';
+import { AuthProvider, AccountProvider } from '@context';
 import { useMediaQuery } from '@hooks';
 import { BREAKPOINTS } from './styles/breakpoints';
 
@@ -14,7 +14,13 @@ function App() {
         <div id="page-wrapper">
             <MemoizedHeader />
             <AuthProvider>
-                {useMediaQuery(BREAKPOINTS.md) ? <NavbarMobileLayout /> : <NavbarDesktopLayout />}
+                <AccountProvider>
+                    {useMediaQuery(BREAKPOINTS.md) ? 
+                        <NavbarMobileLayout />
+                        :
+                        <NavbarDesktopLayout />
+                    }
+                </AccountProvider>
                 <TodoList />
             </AuthProvider>
             <MemoizedFooter />
