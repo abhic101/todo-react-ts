@@ -47,7 +47,7 @@
 -----------GLOBAL STYLING---------
 */
 body {
-    font-family: "Nunito";
+    font-family: "Nunito", Arial;
     margin: 0;
     padding: 0;
     background: linear-gradient( rgb(19, 54, 110) 40%, rgb(60, 200, 255) 100%);
@@ -106,7 +106,7 @@ main {
 /*---------- DIALOG GLOBAL (works for v2 only) --------------*/
 
 .dialog-root {
-    font-family: 'Nunito';
+    font-family: "Nunito", Arial;;
     padding: var(--dialog-padding);
     margin: 0;
     border-radius: var(--dialog-border-radius);
@@ -179,7 +179,7 @@ main {
 }
 
 .dialog-text-input {
-    font-family: 'nunito';
+    font-family: "Nunito", Arial;;
     font-size: 16px;
     color: var(--white);
 
@@ -196,7 +196,7 @@ main {
 
 .dialog-text-input::placeholder {
     color: var(--dialog-input-placeholder-color);
-    font-family: 'Nunito';
+    font-family: "Nunito", Arial;;
 }
 
 .dialog-text-input:focus {
@@ -245,7 +245,7 @@ main {
     margin-left: 3px;
 
     color:var(--white);
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Nunito", Arial;;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
@@ -333,5 +333,5 @@ main {
 }
 
 button {
-    font-family: 'Nunito';
+    font-family: "Nunito", Arial;;
 }

@@ -25,7 +25,7 @@ function AddTaskDialog({task, onClose}: Props) {
     })
 
     async function onSubmit(data: FormData) {
-        let updateRes: number | undefined = 100;
+        let updateRes: number | string = 100;
         if (task) {
             const newTask = {...task, task_name: data.task_name, task_details: data.task_details}
             updateRes = await updateTask(newTask);
@@ -34,13 +34,32 @@ function AddTaskDialog({task, onClose}: Props) {
             updateRes = await addTask(data);
         }
 
-        if (!updateRes) {
-            setHttpNotif("Internal Server Error");
-        }
-        else if (updateRes === 201 || updateRes === 200){
+        // On Success
+        if (updateRes === 201 || updateRes === 200){
             setHttpNotif('Task Added Successfully');
             await new Promise((resolve) => {setTimeout(resolve, 500)})
             onClose();
+        }
+
+        // On failure
+        switch (updateRes) {
+            case 604:
+                setHttpNotif('No internet detected');
+                break;
+            case 605:
+                setHttpNotif('Server busy... Please try again later');
+                break;
+            case 606:
+                setHttpNotif('Error! Please try again.');
+                break;
+            case 401:
+                setHttpNotif('Unauthorized. Please login with your account');
+                break;
+            case 403:
+                setHttpNotif('Request cannot be fullfilled')
+                break;
+            default:
+                setHttpNotif('Internal Server Error');
         }
     }
 

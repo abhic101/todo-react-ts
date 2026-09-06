@@ -2,7 +2,7 @@ import { useEffect, useState} from 'react';
 import { isAxiosError } from 'axios';
 import { useAuthContext, defaultUser } from '@hooks';
 import { SettingsData } from '../components/index.componentTypes';
-import { accountApi } from '@api';
+import { accountAPI } from '@/apis/apis.index';
 
 type ProfileType = SettingsData.ProfileFormType;
 type PasswordType = SettingsData.PasswordFormType;
@@ -31,7 +31,7 @@ function useAccount() {
             setProfile(null);
             return;
         }
-        accountApi.get<{message: string, user: ProfileType}>('/').then((res) => {
+        accountAPI.get<{message: string, user: ProfileType}>('/').then((res) => {
             setProfile(res.data.user);
         }).catch((err) => {
             handleError(err);
@@ -40,7 +40,7 @@ function useAccount() {
 
     async function updateProfile(updateData: ProfileType) {
         try {
-            const res = await accountApi.patch<{message: string, user: ProfileType}>('/', updateData);
+            const res = await accountAPI.patch<{message: string, user: ProfileType}>('/', updateData);
             setProfile(res.data.user);
             return res.status;
         } catch(err:any) {
@@ -50,7 +50,7 @@ function useAccount() {
 
     async function updateUsername(updateData: UsernameType) {
         try {
-            const res = await accountApi.put('/username', updateData);
+            const res = await accountAPI.put('/username', updateData);
             return res.status;
         } catch(err: any) {
             return handleError(err);
@@ -59,7 +59,7 @@ function useAccount() {
 
     async function updatePassword(updateData: PasswordType) {
         try {
-            const res = await accountApi.put('/password', updateData);
+            const res = await accountAPI.put('/password', updateData);
             setUser(defaultUser);
             return res.status;
         } catch(err: any) {

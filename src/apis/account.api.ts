@@ -1,6 +1,7 @@
 import axios from 'axios';
+import type { Endpoint, HTTPMethod} from './apis.types';
 
-const accountApi = axios.create({
+const accountAPI = axios.create({
     baseURL: `${import.meta.env.VITE_API_BASE_URL}/account`,
     timeout: 10000,
     withCredentials: true,
@@ -11,4 +12,32 @@ const accountApi = axios.create({
     }
 });
 
-export default accountApi;
+const accountEndpoints = {
+    ACCOUNT: {
+        path: '/',
+        methods: ['get', 'patch'] as HTTPMethod[]
+    }  as Endpoint,
+    USERNAME: {
+        path: '/username',
+        methods: ['put'] as HTTPMethod[]
+    }  as Endpoint,
+    PASSWORD: {
+        path: '/password',
+        methods: ['put'] as HTTPMethod[]
+    } as Endpoint
+};
+
+function isAccountEndpointIndempotent(url: string, method: HTTPMethod) {
+    if (method === 'get') return true;
+    if (method === 'put') return false;
+    switch (url) {
+        case accountEndpoints.ACCOUNT.path:
+            return false;
+    }
+}
+
+export {
+    accountAPI,
+    accountEndpoints,
+    isAccountEndpointIndempotent
+};

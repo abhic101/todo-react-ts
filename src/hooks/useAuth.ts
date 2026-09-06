@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { authAPI } from '@api';
+import { authAPI  } from '@/apis/apis.index';
 import {isAxiosError} from 'axios';
 import { SignupData } from '../components/index.componentTypes';
 

@@ -1,13 +1,57 @@
 import {isAxiosError} from 'axios';
 import { useState, useEffect, useRef } from 'react';
-import { todoAPI } from '@api';
-import { useAuthContext, defaultUser } from '@hooks';
+import { todoAPI, callApi } from '@api';
+import { NetworkError, AppError } from '@errors';
+import { useAuthContext } from '@hooks';
 import { TodoData } from '../components/index.componentTypes'
 
 type TodoTask = TodoData.TodoTask;
 
+// Todo error handler for this hook
+function handleTodoErrors(err: any) {
+    if(err instanceof NetworkError) {
+        switch(err.kind) {
+            case 'aborted':
+                return 606;
+            case 'parse':
+                // Log to the logger
+                console.error('Request parsing error: ', err);
+                return 500;
+            case 'timeout':
+                return 605;
+            case 'unknown':
+                console.error('Unknown Network error: ', err);
+                return 500;
+            case 'unreachable':
+                return 604;
+        }
+        if (err.kind === 'http') {
+            switch (err.statusCode) {
+                case 404:
+                    console.error('Todo Post throwing 404: ', err);
+                    return 500;
+                case 422:
+                    console.error('Add task Schema validation failed on server: ', err);
+                    return 500;
+                case 400:
+                    console.error('Add task bad request: ', err);
+                    return 500;
+                default:
+                    return err.statusCode;
+            }
+        }
+        
+    } else if (err instanceof AppError) {
+        console.error('Application error: ', err);
+        return 500;
+    } else {
+        console.error('Unknown error at Api: ', err);
+    }
+    return 500;
+}
+
 function useTodoList() {
-    const {user, setUser, setHasUserChanged} = useAuthContext();
+    const {user, setHasUserChanged} = useAuthContext();
     const [todoList, setTodoList] = useState<TodoTask[]>(() => {
         if (user.userId === 'guest') {
             const localListString = localStorage.getItem('todoList');
@@ -74,21 +118,6 @@ function useTodoList() {
         };
     }, [user.userId]);
 
-    // Todo error handler for this hook
-    function handleTodoErrors(err: any) {
-        if(isAxiosError(err)) {
-            console.log('Status code: ', err.response?.status);
-            console.log('Message: ', err.response?.data?.message);
-            if (err.response?.status === 401) {
-                setUser({...defaultUser});
-            }
-            return err.response?.status;
-        } else {
-            console.error('Error Occurred at GetList: ', err);
-        }
-        return 500;
-    }
-
 
     async function addTask(task: Omit<TodoTask, "status" | "_id">) {
         try {
@@ -99,13 +128,14 @@ function useTodoList() {
                     status: false,
                     _id: (todoList.length + 1).toString()
                 }]);
-                return 201;
+                return '';
             }
-            const res = await todoAPI.post('/', task);
+            // const res = await todoAPI.post('/', task);
+            const res = await callApi(todoAPI, 'post', 'TODO', task);
             setTodoList((prev) => [...prev, res.data.task]);
             return res.status;
-        } catch(err) {
-            handleTodoErrors(err);
+        } catch(err: any) {
+            return handleTodoErrors(err);
         }
     }
 

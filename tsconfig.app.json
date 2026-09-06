@@ -23,7 +23,8 @@
         "@assets/*": ["./src/assets/*"],
         "@hooks": ["./src/hooks/index.hook"],
         "@context": ["./src/context/index.context"],
-        "@api": ["./src/apis/index.api"]
+        "@api": ["./src/apis/apis.index"],
+        "@errors": ["./src/errors/errors.index"]
     }
   },
   "include": ["src"]

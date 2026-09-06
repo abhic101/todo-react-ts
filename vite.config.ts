@@ -16,7 +16,8 @@ export default defineConfig({
             '@assets': path.resolve(__dirname, './src/assets'),
             '@hooks': path.resolve(__dirname, './src/hooks/index.hook'),
             '@context': path.resolve(__dirname, './src/context/index.context'),
-            '@api': path.resolve(__dirname, './src/apis/index.api')
+            '@api': path.resolve(__dirname, './src/apis/apis.index'),
+            '@errors': path.resolve(__dirname, './src/errors/errors.index')
         }
     },
     envDir : './src/config',
