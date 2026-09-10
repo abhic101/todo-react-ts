@@ -6,8 +6,14 @@ import App from './App';
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Root element not found');
 
-createRoot(rootElement).render(
-        <StrictMode>
+if (import.meta.env.VITE_ENV === 'prd') {
+        createRoot(rootElement).render(
                 <App />
-        </StrictMode>
-)
+        )
+} else {
+        createRoot(rootElement).render(
+                <StrictMode>
+                        <App />
+                </StrictMode>
+        )
+}
