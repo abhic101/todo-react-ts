@@ -56,8 +56,7 @@ function CenterModal({closeRequested, onClose, children}: Props) {
                             
                             <ErrorBoundary
                                 fallback={<p className={styles['error-boundary-message']}><span className={styles['error-span']}>🚧</span>&nbsp; Under Construction &nbsp;<span className={styles['error-span']}>🚧</span></p>}
-                                onError={(error, info) => {
-                                    console.log('Logged: ', error.message, info.componentStack);
+                                onError={() => {
                                     onErrorClose();
                                 }}>
                                 {children}

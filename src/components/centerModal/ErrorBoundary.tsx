@@ -29,7 +29,6 @@ class ErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-        console.error('CenterModal ErrorBounday caught an error: ', error, errorInfo);
         this.props.onError?.(error, errorInfo);
     }
 

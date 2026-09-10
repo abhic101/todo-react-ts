@@ -35,7 +35,7 @@ function mapAxiosError(err: AxiosError) {
     if (!err.response) {
         return new NetworkError('Server Unreachable', {
             kind: 'unreachable',
-            isRetryable: true,
+            isRetryable: false,
             cause: err
         });
     }

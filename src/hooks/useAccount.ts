@@ -11,14 +11,10 @@ type UsernameType = SettingsData.UsernameFormType;
 function handleError(err: any) {
     if (isAxiosError(err)) {
         if (err.response) {
-            console.error('Axios Error: ', err.response.status, err.response.data?.message);
-            console.log(err.response.status)
             return err.response.status;
         }
-        console.error('Axios RequestError: ', err.request?.status, err);
         return err.request?.status;
     }
-    console.error("Unknown Error", err );
     return 500;
 }
 

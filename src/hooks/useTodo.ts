@@ -1,7 +1,6 @@
-import {isAxiosError} from 'axios';
 import { useState, useEffect, useRef } from 'react';
 import { todoAPI, callApi } from '@api';
-import { NetworkError, AppError } from '@errors';
+import { NetworkError, AppError, StatusCodeMap as ErrCode, ErrorKindName as ErrName } from '@errors';
 import { useAuthContext } from '@hooks';
 import { TodoData } from '../components/index.componentTypes'
 
@@ -10,28 +9,23 @@ type TodoTask = TodoData.TodoTask;
 // Todo error handler for this hook
 function handleTodoErrors(err: any) {
     if(err instanceof NetworkError) {
-        switch(err.kind) {
-            case 'aborted':
-                return 606;
-            case 'parse':
-                // Log to the logger
-                console.error('Request parsing error: ', err);
+        switch(err.name) {
+            case ErrName.aborted:
+                return ErrCode.aborted;
+            case ErrName.parse:
                 return 500;
-            case 'timeout':
-                return 605;
-            case 'unknown':
-                console.error('Unknown Network error: ', err);
+            case ErrName.timeout:
+                return ErrCode.timeout;
+            case ErrName.unknown:
                 return 500;
-            case 'unreachable':
-                return 604;
+            case ErrName.unreachable:
+                return ErrCode.unreachable;
         }
-        if (err.kind === 'http') {
+        if (err.name === ErrName.http) {
             switch (err.statusCode) {
                 case 422:
-                    console.error('Add task Schema validation failed on server: ', err);
                     return 500;
                 case 400:
-                    console.error('Add task bad request: ', err);
                     return 500;
                 default:
                     return err.statusCode;
@@ -39,10 +33,7 @@ function handleTodoErrors(err: any) {
         }
         
     } else if (err instanceof AppError) {
-        console.error('Application error: ', err);
         return err.statusCode;
-    } else {
-        console.error('Unknown error at Api: ', err);
     }
     return 500;
 }
@@ -68,66 +59,75 @@ function useTodoList() {
         if (user.userId === 'guest') {
             const localListString = localStorage.getItem('todoList');
             if (localListString) {
-                const localList = JSON.parse(localListString) as TodoTask[]
-                setTodoList(localList);
-                todoListRef.current = localList;
+                try {
+                    const localList = JSON.parse(localListString) as TodoTask[];
+                    setTodoList(localList);
+                    todoListRef.current = localList;
+                } catch {
+                    setTodoList([]);
+                }
             } else {
                 setTodoList([]);
             }
+            setShowSaveListDialog(false);
+            setUnsavedTodoList([]);
             setHasUserChanged(false);
             return;
-        };
+        }
 
-        todoAPI.get<{message: string, tasks: TodoTask[]}>('/').then((res) => {
-            if (todoList.length !== 0 && todoList[0]._id === '1') {
-                setUnsavedTodoList(todoList);
-                setShowSaveListDialog(true);
+        // Transitioned from guest to registered user: check for local guest tasks to merge
+        const localListString = localStorage.getItem('todoList');
+        let localTasks: TodoTask[] = [];
+        if (localListString) {
+            try {
+                localTasks = JSON.parse(localListString) as TodoTask[];
+            } catch {
+                localTasks = [];
             }
-            setTodoList(res.data.tasks.sort((a, b) => {b;return a.status ? 1 : -1}));
-            setHasUserChanged(false);
-        }).catch((err) => {
-            if(isAxiosError(err)) {
-                console.log('Status code sent: ', err.response?.status);
-                console.log('Message: ', err.response?.data?.message);
-                console.error("axiosError: ", err);
-            } else {
-                console.error('Error Occurred at GetList: ', err);
-            }
-        })
+        }
+        if (localTasks.length === 0 && todoListRef.current.length > 0) {
+            localTasks = todoListRef.current;
+        }
+
+        if (localTasks.length > 0) {
+            setUnsavedTodoList(localTasks);
+            setShowSaveListDialog(true);
+        }
+
+        callApi(todoAPI, { method: 'get', endpointName: 'TODO' })
+            .then((res) => {
+                const serverTasks: TodoTask[] = res.data.tasks || [];
+                setTodoList(serverTasks.sort((a, b) => (a.status === b.status ? 0 : a.status ? 1 : -1)));
+                setHasUserChanged(false);
+            })
+            .catch(() => {
+                setHasUserChanged(false);
+            });
     }, [user.userId]);
 
     useEffect(() => {
         todoListRef.current = todoList;
-    }, [todoList])
+    }, [todoList]);
 
+    // Save guest todos whenever todoList changes in guest mode
     useEffect(() => {
-        const saveGuestTodos = () => {
-            if (user.userId === 'guest') {
-            localStorage.setItem('todoList', JSON.stringify(todoListRef.current));
-            }
-        };
-
-        window.addEventListener('beforeunload', saveGuestTodos);
-        
-        return () => {
-            window.removeEventListener('beforeunload', saveGuestTodos);
-            saveGuestTodos();
-        };
-    }, [user.userId]);
-
+        if (user.userId === 'guest') {
+            localStorage.setItem('todoList', JSON.stringify(todoList));
+        }
+    }, [todoList, user.userId]);
 
     async function addTask(task: Omit<TodoTask, "status" | "_id">) {
         try {
             if (user.userId === 'guest') {
-                setTodoList((prev) => [...prev, {
+                const newTask: TodoTask = {
                     task_name: task.task_name,
                     task_details: task.task_details,
                     status: false,
-                    _id: (todoList.length + 1).toString()
-                }]);
+                    _id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString()
+                };
+                setTodoList((prev) => [newTask, ...prev]);
                 return 201;
             }
-            // const res = await todoAPI.post('/', task);
             const res = await callApi(todoAPI, {method: 'post', endpointName: 'TODO'}, task);
             setTodoList((prev) => [res.data.task, ...prev]);
             return res.status;
@@ -143,9 +143,12 @@ function useTodoList() {
             }
             setTodoList((prev) => prev.map((t) => {
                 if (t._id === task._id) {
-                    t.status = task.status;
-                    t.task_details = task.task_details;
-                    t.task_name = task.task_name;
+                    return {
+                        ...t,
+                        status: task.status,
+                        task_details: task.task_details,
+                        task_name: task.task_name
+                    };
                 }
                 return t;
             }));
@@ -158,7 +161,7 @@ function useTodoList() {
     async function deleteTask(task: TodoTask) {
         try {
             if (user.userId !== 'guest') {
-                await callApi(todoAPI, {method: 'patch', endpointName: 'SINGLE_TASK', endpointParams: [task._id as string]});
+                await callApi(todoAPI, {method: 'delete', endpointName: 'SINGLE_TASK', endpointParams: [task._id as string]});
             }
             setTodoList((prev) => prev.filter((t) => t._id !== task._id));
             return 200;
@@ -169,19 +172,36 @@ function useTodoList() {
 
     async function mergeUnsavedList() {
         try {
-            if (user.userId === 'guest') return;
-            const res = await todoAPI.post('/batch', {tasks: unsavedTodoList});
+            if (user.userId === 'guest') return 200;
+            if (unsavedTodoList.length === 0) {
+                setShowSaveListDialog(false);
+                return 200;
+            }
+            const tasksToMerge = unsavedTodoList.map(({ task_name, task_details, status }) => ({
+                task_name,
+                task_details: task_details || '',
+                status: !!status
+            }));
+            const res = await callApi(todoAPI, {method: 'post', endpointName: 'BATCH'}, {tasks: tasksToMerge});
             
-            setTodoList([...todoList, ...res.data.tasks]);
+            const mergedTasks: TodoTask[] = res.data.tasks || [];
+            setTodoList((prev) => [...prev, ...mergedTasks].sort((a, b) => (a.status === b.status ? 0 : a.status ? 1 : -1)));
             setUnsavedTodoList([]);
             setShowSaveListDialog(false);
             localStorage.removeItem('todoList');
+            return 201;
         } catch(err) {
-            handleTodoErrors(err);
+            return handleTodoErrors(err);
         }
     }
 
-    return { todoList, showSaveListDialog, setShowSaveListDialog, addTask, updateTask, deleteTask, mergeUnsavedList };
+    function cancelMerge() {
+        setUnsavedTodoList([]);
+        setShowSaveListDialog(false);
+        localStorage.removeItem('todoList');
+    }
+
+    return { todoList, showSaveListDialog, setShowSaveListDialog, addTask, updateTask, deleteTask, mergeUnsavedList, cancelMerge };
 }
 
 export default useTodoList;

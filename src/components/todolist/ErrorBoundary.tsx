@@ -29,7 +29,6 @@ class ErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-        console.error('TodoList ErrorBoundary caught and Error: ', error, errorInfo);
         this.props.onError?.(error, errorInfo);
     }
 

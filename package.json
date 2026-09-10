@@ -1,5 +1,5 @@
 {
-  "name": "front",
+  "name": "todo-frontend",
   "version": "1.0.0",
   "description": "React frontend for todo list",
   "license": "ISC",

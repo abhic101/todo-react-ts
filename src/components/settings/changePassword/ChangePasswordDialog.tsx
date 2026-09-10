@@ -30,7 +30,6 @@ function ChangePasswordDialog({changeDialog}: Props) {
         setHttpNotif(null);
 
         updateRes = await updatePassword(data);
-        console.log(updateRes);
         if (!updateRes) {
             setHttpNotif('Unknown Error');
         } else if (updateRes === 200 || updateRes === 201) {

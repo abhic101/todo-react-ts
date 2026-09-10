@@ -37,7 +37,6 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
         } else {
             updateRes = await updateUsername(data);
         }
-        console.log(updateRes);
         if (!updateRes) {
             setHttpNotif('Unknown Error');
         } else if (updateRes === 200 || updateRes === 201) {

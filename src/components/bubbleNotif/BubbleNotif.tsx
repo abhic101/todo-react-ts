@@ -3,9 +3,6 @@ import {createPortal} from 'react-dom';
 import { FaTimes as CloseIcon } from 'react-icons/fa';
 import styles from './BubbleNotif.module.css';
 
-// 
-const AUTO_CLOSE_TIME = 3000
-
 interface Props {
     message: string;
     autoCloseTime?: number;
@@ -26,7 +23,8 @@ function BubbleNotif({message, autoCloseTime, onClose}: Props) {
     }, [onClose])
 
     useEffect(() => {
-        const closeTimerId = setTimeout(() => {onCloseWrapper.current()}, autoCloseTime ? autoCloseTime : AUTO_CLOSE_TIME);
+        if (!autoCloseTime) return;
+        const closeTimerId = setTimeout(() => {onCloseWrapper.current()}, autoCloseTime);
         return () => {clearTimeout(closeTimerId)};
     });
 

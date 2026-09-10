@@ -17,14 +17,14 @@ interface Props {
 
 function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
     const [showBubbleNotif, setShowBubbleNotif] = useState<boolean>(false);
-    let bubbleNotifMessage: string = 'Account error! Please login again';
+    const bubbleNotifMessage = useRef('');
     const {
         todoList,
         updateTask,
         deleteTask,
         showSaveListDialog,
-        setShowSaveListDialog,
         mergeUnsavedList,
+        cancelMerge,
     } = useTodoContext();
     const { hasUserChanged } = useAuthContext();
     const taskRef = useRef<TodoTask>(undefined);
@@ -39,53 +39,65 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
         let attr = {};
         if (task.status) {
             attr = {
-                style: {textDecoration:'line-through', 'color': 'rgba(255, 255, 255, 0.5'} as CSSProperties
+                style: {textDecoration:'line-through', color: 'rgba(255, 255, 255, 0.5)'} as CSSProperties
             }
         }
         return attr;
     }
 
     function setBubbleNotifMessage(statusCode: number) {
-        if (statusCode >= 200 || statusCode < 300) return;
-        else {
-            switch(statusCode) {
-                case 401:
-                    bubbleNotifMessage = 'Account error! Please login again';
-                    break;
-                case 403:
-                    bubbleNotifMessage = 'Account error! Please login again';
-                    break;
-                case 404:
-                    bubbleNotifMessage = 'Please refresh the page';
-                    break;
-                case 605:
-                    bubbleNotifMessage = 'Server Busy. Please try again later';
-                    break;
-                case 604:
-                    bubbleNotifMessage = 'You seems to be offline';
-                    break;
-                default:
-                    bubbleNotifMessage = 'Internal Server Error';
-            }
-            setShowBubbleNotif(true);
+        switch(statusCode) {
+            case 401:
+                bubbleNotifMessage.current = 'Account error! Please login again';
+                break;
+            case 403:
+                bubbleNotifMessage.current = 'Account error! Please login again';
+                break;
+            case 404:
+                bubbleNotifMessage.current = 'Please refresh the page';
+                break;
+            case 605:
+                bubbleNotifMessage.current = 'Server Busy. Please try again later';
+                break;
+            case 604:
+                bubbleNotifMessage.current = 'Operation Failed! Please check your internet';
+                break;
+            default:
+                bubbleNotifMessage.current = 'Internal Server Error';
         }
     }
 
     async function onToggle (e: ChangeEvent<HTMLInputElement>, task: TodoTask) {
-        e.preventDefault();
-        const statusCode = await updateTask({...task, status: e.target.checked});
+        const nextStatus = e.target.checked;
+        const statusCode = await updateTask({...task, status: nextStatus});
 
-        setBubbleNotifMessage(statusCode);
+        if (statusCode === 200) return;
+        else {
+            setBubbleNotifMessage(statusCode);
+            setShowBubbleNotif(true);
+        }
     }
 
     async function onDelete(e: MouseEvent<HTMLButtonElement>, task: TodoTask) {
         e.preventDefault();
         const statusCode = await deleteTask(task);
 
-        setBubbleNotifMessage(statusCode);
+        if (statusCode === 200) return;
+        else {
+            setBubbleNotifMessage(statusCode);
+            setShowBubbleNotif(true);
+        }
     }
 
+    async function mergerUnsavedListWrapper() {
+        const statusCode = await mergeUnsavedList();
 
+        if (statusCode === 200 || statusCode === 201) return;
+        else {
+            setBubbleNotifMessage(statusCode);
+            setShowBubbleNotif(true);
+        }
+    }
 
     return (
         <div className={styles['task-list-container']}>
@@ -104,7 +116,7 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
                                     <details className={styles['task-content-container']} >
                                         <summary className={styles['summary-box']} {...markedTaskStyle(task)} >
 
-                                            <label className={styles["glass-checkbox"]}>
+                                            <label className={styles["glass-checkbox"]} onClick={(e) => { e.stopPropagation(); }}>
                                                 <input className={styles['task-status-checkbox']} type='checkbox' checked={task.status} onChange={(e) => onToggle(e, task)}/>
                                                 <span className={styles["checkmark"]}>
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -117,7 +129,7 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
 
                                             <div className={styles['buttons-container']} >
                                                 <button className={styles['button']} onClick={(e) => {e.preventDefault();taskRef.current = task;setActiveDialog('task-editor');}}><AiOutlineEdit className={styles['edit-icon']} /></button>
-                                                <button className={styles['button']} onClick={(e) => onDelete(e, task)} ><AiOutlineDelete className={styles['delete-icon']} /></button>
+                                                <button className={styles['button']} onClick={async (e) => {await onDelete(e, task)}} ><AiOutlineDelete className={styles['delete-icon']} /></button>
                                             </div>
 
                                         </summary>
@@ -139,11 +151,11 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
                 <></>
             }
             {showSaveListDialog ? (
-                <RenderConfirmDialog message={"Some unsaved tasks are found in the system. Save them to account?"} onConfirm={mergeUnsavedList} onClose={() => {console.log('called close');setShowSaveListDialog(false)}} onCancel={() => {console.log('called cancel');setShowSaveListDialog(false)}} />
+                <RenderConfirmDialog message={"Some unsaved tasks are found in the system. Save them to account?"} onConfirm={mergerUnsavedListWrapper} onClose={cancelMerge} onCancel={cancelMerge} />
                 ) :
                 null
             }
-            {showBubbleNotif && <BubbleNotif message={bubbleNotifMessage} onClose={() => {setShowBubbleNotif(false)}}/>}
+            {showBubbleNotif && <BubbleNotif message={bubbleNotifMessage.current} onClose={() => {setShowBubbleNotif(false)}}/>}
         </div>
     )
 }

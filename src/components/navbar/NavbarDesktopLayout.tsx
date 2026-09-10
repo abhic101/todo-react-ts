@@ -1,12 +1,12 @@
+import { useRef } from 'react';
 import { Navbar } from '@components';
 import styles from './NavbarDesktopLayout.module.css'
 
 function NavbarDesktopLayout () {
-    const showNavbar = true;
-    const setShowNavbar = () => {showNavbar};
+    const closeNavbarRef = useRef(() => {});
     return (
         <nav className={styles['desktop-navbar']}>
-            <Navbar closeNavbar={setShowNavbar} className={styles['desktop-navbar-main']}/>
+            <Navbar closeNavbarRef={closeNavbarRef} className={styles['desktop-navbar-main']}/>
         </nav>
     )
 }

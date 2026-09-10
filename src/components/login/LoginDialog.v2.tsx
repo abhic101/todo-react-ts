@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { schema, type FormData } from './login.data';
 import { useAuthContext } from '@hooks';
+import { StatusCodeMap as ErrCode } from '@errors';
 import styles from './LoginDialog.v2.module.css';
 import loginLogo from '@assets/fingerprint.png';
 
@@ -25,21 +26,33 @@ function LoginDialog({onClose, changeDialog}: Props) {
     const onSubmit = async (data: FormData) => {
         setHttpNotif(null);
         
-        const resLogin = await login(data.username, data.password);
-        if (resLogin === 201) {
+        const statusCode = await login(data.username, data.password);
+        if (statusCode === 200) {
             setHttpNotif('Login Success');
             await new Promise(resolve=>setTimeout(resolve, 500));
             onClose();
-        } else if (typeof resLogin !== 'number') {
-            if (resLogin.field === 'password') {
-                setFocus('password');
-                setHttpNotif('Incorrect Password');
-            } else {
-                setFocus('username');
-                setHttpNotif('Incorrect Username');
-            }
         } else {
-            setHttpNotif('Internal Server Error. Please try again later');
+            switch(statusCode) {
+                case 401:
+                    setFocus('username');
+                    setHttpNotif('Invalid Credentials');
+                    break;
+                case 403:
+                    setFocus('username');
+                    setHttpNotif('Invalid Credentials');
+                    break;
+                case ErrCode.timeout:
+                    setFocus('username');
+                    setHttpNotif('Server Busy. Please try later');
+                    break;
+                case ErrCode.unreachable:
+                    setFocus('username');
+                    setHttpNotif('Login Failed! Please check your internet');
+                    break;
+                default:
+                    setFocus('username');
+                    setHttpNotif('Internal Server Error');
+            }
         }
     }
 

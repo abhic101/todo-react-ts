@@ -2,6 +2,7 @@ import { useState, type CSSProperties } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthContext } from '@hooks';
+import { StatusCodeMap as ErrCode } from '@errors';
 import { schema, type FormData } from './signup.data';
 import styles from './SignupDialog.v2.module.css';
 import signupLogo from '@assets/signin-logo.png';
@@ -30,21 +31,30 @@ function SignupDialog ({onClose, changeDialog}: Props) {
             return;
         };
         setHttpNotif(null);
-        const resSignup = await signup(data);
+        const statusCode = await signup(data);
 
-        if (resSignup === 200 || resSignup === 201) {
+        if (statusCode === 201) {
             setHttpNotif('Account Created Successfully');
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve=>setTimeout(resolve, 1000));
             changeDialog();
-        } else if (typeof resSignup !== 'number') {
-            if (resSignup.statusCode === 409) {
-                setHttpNotif('Username already taken');
-                setFocus('username');
-            } else {
-                setHttpNotif('Intenal Server Error. Please try again later.')
-            }
         } else {
-            setHttpNotif('Intenal Server Error. Please try again later.')
+            switch(statusCode) {
+                case 409:
+                    setFocus('username');
+                    setHttpNotif('Username already taken');
+                    break;
+                case ErrCode.timeout:
+                    setFocus('firstname');
+                    setHttpNotif('Server Busy. Please try later');
+                    break;
+                case ErrCode.unreachable:
+                    setFocus('firstname');
+                    setHttpNotif('Login Failed! Please check your internet');
+                    break;
+                default:
+                    setFocus('firstname');
+                    setHttpNotif('Internal Server Error');
+            }
         }
     }
 

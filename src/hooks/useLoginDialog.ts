@@ -1,12 +1,12 @@
 import { useState, useRef } from 'react';
 import type { FocusEvent, ChangeEvent, SubmitEvent, CSSProperties } from 'react';
 import { ZodError } from 'zod';
-import { useAuthContext, type InvalidFieldToComponent } from '@hooks';
+import { useAuthContext } from '@hooks';
 import { LoginData } from '../components/index.componentTypes';
 
 type FormData = LoginData.FormData;
 type InputRef = LoginData.InputRef;
-const { schema, initialFormData, httpErrorMessage } = LoginData;
+const { schema, initialFormData } = LoginData;
 
 /**
  * Specific login Dialog logic for FormData management, submission and error display
@@ -109,27 +109,18 @@ function useLoginDialog(onClose: () => void, inputRef: InputRef) {
         }
 
         // Making request
-        const success: InvalidFieldToComponent | number = await login(formData.username, formData.password);
+        const statusCode: number = await login(formData.username, formData.password);
         
         // Handling http error
-        if (success === 201) {
+        if (statusCode === 200 || statusCode === 201) {
             setHttpError("Login Success");
             reanimateError();
             setTimeout(onClose, 1000);
             return;
-        } else if (success === 1000) {
+        } else if (statusCode === 401) {
+            setHttpError("Invalid Credentials");
+        } else {
             setHttpError("Internal Server Error. Please try again later");
-        } else if (typeof success !== 'number'){
-            switch (success.statusCode) {
-                case 401:
-                    setHttpError(httpErrorMessage[success.field as keyof typeof httpErrorMessage] as string)
-                    const invalidated = new Map(invalidatedFields);
-                    invalidated.set(success.field as keyof FormData, '')
-                    setInvalidatedFields(invalidated);
-                    break;
-                default: 
-                    setHttpError("Internal Server Error. Please try again later");
-            }
         }
         reanimateError();
         setFocusedInput();
