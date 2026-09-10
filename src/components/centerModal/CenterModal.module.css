@@ -66,15 +66,12 @@
 .close-button-container > button {
     background-color: transparent;
     margin: 0;
-    padding: 0 15px;
+    padding: 8px 11px 2px 5px;
     outline: none;
     border: none;
-    border-radius: 20px;
     
     color: var(--dialog-input-bg-color);
-    font-family: var(--primary-font);
-    font-size: 25px;
-    font-weight: 800;
+    font-size: 20px;
 }
 
 .error-boundary-message {

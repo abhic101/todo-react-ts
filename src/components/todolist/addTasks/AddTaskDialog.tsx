@@ -58,8 +58,11 @@ function AddTaskDialog({task, onClose}: Props) {
             case 403:
                 setHttpNotif('Request cannot be fullfilled')
                 break;
-            default:
+            case 500:
                 setHttpNotif('Internal Server Error');
+                break;
+            default:
+                setHttpNotif('Application Issue! Please contact support');
         }
     }
 

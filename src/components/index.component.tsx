@@ -15,3 +15,4 @@ export { default as ChangePasswordDialog } from './settings/changePassword/Chang
 export { default as ConfirmDialog} from './confirmDialog/ConfirmDialog'
 export { default as RenderConfirmDialog } from './confirmDialog/RenderConfirmDialog';
 export { default as Loader } from './loader/Loader';
+export { default as BubbleNotif } from './bubbleNotif/BubbleNotif'

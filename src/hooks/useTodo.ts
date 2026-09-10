@@ -27,9 +27,6 @@ function handleTodoErrors(err: any) {
         }
         if (err.kind === 'http') {
             switch (err.statusCode) {
-                case 404:
-                    console.error('Todo Post throwing 404: ', err);
-                    return 500;
                 case 422:
                     console.error('Add task Schema validation failed on server: ', err);
                     return 500;
@@ -43,7 +40,7 @@ function handleTodoErrors(err: any) {
         
     } else if (err instanceof AppError) {
         console.error('Application error: ', err);
-        return 500;
+        return err.statusCode;
     } else {
         console.error('Unknown error at Api: ', err);
     }
@@ -128,11 +125,11 @@ function useTodoList() {
                     status: false,
                     _id: (todoList.length + 1).toString()
                 }]);
-                return '';
+                return 201;
             }
             // const res = await todoAPI.post('/', task);
-            const res = await callApi(todoAPI, 'post', 'TODO', task);
-            setTodoList((prev) => [...prev, res.data.task]);
+            const res = await callApi(todoAPI, {method: 'post', endpointName: 'TODO'}, task);
+            setTodoList((prev) => [res.data.task, ...prev]);
             return res.status;
         } catch(err: any) {
             return handleTodoErrors(err);
@@ -142,7 +139,7 @@ function useTodoList() {
     async function updateTask(task: TodoTask) {
         try {
             if (user.userId !== 'guest') {
-                await todoAPI.patch(`/${task._id}`, task);
+                await callApi(todoAPI, {method: 'patch', endpointName: 'SINGLE_TASK', endpointParams: [task._id as string]}, task);
             }
             setTodoList((prev) => prev.map((t) => {
                 if (t._id === task._id) {
@@ -161,12 +158,12 @@ function useTodoList() {
     async function deleteTask(task: TodoTask) {
         try {
             if (user.userId !== 'guest') {
-                await todoAPI.delete(`/${task._id}`);
+                await callApi(todoAPI, {method: 'patch', endpointName: 'SINGLE_TASK', endpointParams: [task._id as string]});
             }
             setTodoList((prev) => prev.filter((t) => t._id !== task._id));
             return 200;
         } catch(err) {
-            handleTodoErrors(err);
+            return handleTodoErrors(err);
         }
     }
 

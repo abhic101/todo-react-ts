@@ -8,7 +8,22 @@ import { NetworkError, InvalidArgError, AppError, mapAxiosError } from '@errors'
 
 const MAX_RETRIES = 5;
 
-async function callApi(apiInstance: AxiosInstance, method: HTTPMethod, endpointName: AvailableEndpointsName, data: any = undefined, config: AxiosRequestConfig | undefined = undefined) {
+type EndpointArg = {
+    method: HTTPMethod
+    endpointName: AvailableEndpointsName,
+    endpointParams?: string[];
+}
+
+async function callApi (
+    apiInstance: AxiosInstance,
+    {
+        method,
+        endpointName,
+        endpointParams,
+    }: EndpointArg,
+    data: any = undefined,
+    config: AxiosRequestConfig | undefined = undefined
+) {
     const baseURL = apiInstance.getUri();
     const feature = baseURL.split('/')[3];
 
@@ -42,11 +57,28 @@ async function callApi(apiInstance: AxiosInstance, method: HTTPMethod, endpointN
         throw new InvalidArgError('Invalid method for this api endpoint');
     }
 
+    // Validate path string
+    const pathFormat = endpoint?.path as string;
+    const pathFormatArr = pathFormat.split('/');
+    let requiredParams = 0;
+    pathFormatArr.forEach((val) => {val === '*' && requiredParams++});
+    let path: string;
+    if (!requiredParams) {
+        path = endpoint?.path as string;
+    } else {
+        if (requiredParams !== endpointParams?.length) {
+            throw new InvalidArgError('Please provide params for dynamic path');
+        }
+        path = buildPathString(pathFormatArr, endpointParams, requiredParams);
+    }
+    
+
+
     // Request is valid
     let requestCounter = 0;
     let err: NetworkError = new NetworkError('Temp');
     while(requestCounter < MAX_RETRIES) {
-        const res: AxiosResponse | Error = await callApiHelper(apiInstance, method, endpoint?.path as string, data, config);
+        const res: AxiosResponse | Error = await callApiHelper(apiInstance, method, path, data, config);
         if (!(res instanceof Error)) {
             return res;
         }
@@ -59,8 +91,6 @@ async function callApi(apiInstance: AxiosInstance, method: HTTPMethod, endpointN
             };
         }
         requestCounter++;
-        console.log('Retry: ' + requestCounter);
-        console.log(err);
     }
     throw err;
 }
@@ -72,6 +102,15 @@ async function callApiHelper(apiInstance: AxiosInstance, method: HTTPMethod, end
     } catch(err: any) {
         return err;
     }
+}
+
+function buildPathString(pathFormat: string[], params: string[], count: number) {
+    const finalPath = pathFormat.map((val) => {
+        if (val === '*') {
+            return params[params.length - count--];
+        }
+    })
+    return finalPath.join('/');
 }
 
 export default callApi;

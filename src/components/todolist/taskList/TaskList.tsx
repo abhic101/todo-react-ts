@@ -1,6 +1,7 @@
-import { useRef, useEffect, type ReactNode, type CSSProperties, type SetStateAction, type Dispatch} from 'react';
+import { useRef, useEffect, useState} from 'react';
+import type { ReactNode, CSSProperties, SetStateAction, Dispatch, ChangeEvent, MouseEvent } from 'react';
 import { useTodoContext, type TodoTask, useAuthContext } from '@hooks';
-import { ActiveModalRenderer, RenderConfirmDialog, Loader } from '@components';
+import { ActiveModalRenderer, RenderConfirmDialog, Loader, BubbleNotif } from '@components';
 import { ModalData } from '../../index.componentTypes';
 import { AiOutlineDelete , AiOutlineEdit } from "react-icons/ai";
 import EmptyIcon from '@assets/empty-box.webp'
@@ -15,6 +16,8 @@ interface Props {
 }
 
 function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
+    const [showBubbleNotif, setShowBubbleNotif] = useState<boolean>(false);
+    let bubbleNotifMessage: string = 'Account error! Please login again';
     const {
         todoList,
         updateTask,
@@ -42,6 +45,48 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
         return attr;
     }
 
+    function setBubbleNotifMessage(statusCode: number) {
+        if (statusCode >= 200 || statusCode < 300) return;
+        else {
+            switch(statusCode) {
+                case 401:
+                    bubbleNotifMessage = 'Account error! Please login again';
+                    break;
+                case 403:
+                    bubbleNotifMessage = 'Account error! Please login again';
+                    break;
+                case 404:
+                    bubbleNotifMessage = 'Please refresh the page';
+                    break;
+                case 605:
+                    bubbleNotifMessage = 'Server Busy. Please try again later';
+                    break;
+                case 604:
+                    bubbleNotifMessage = 'You seems to be offline';
+                    break;
+                default:
+                    bubbleNotifMessage = 'Internal Server Error';
+            }
+            setShowBubbleNotif(true);
+        }
+    }
+
+    async function onToggle (e: ChangeEvent<HTMLInputElement>, task: TodoTask) {
+        e.preventDefault();
+        const statusCode = await updateTask({...task, status: e.target.checked});
+
+        setBubbleNotifMessage(statusCode);
+    }
+
+    async function onDelete(e: MouseEvent<HTMLButtonElement>, task: TodoTask) {
+        e.preventDefault();
+        const statusCode = await deleteTask(task);
+
+        setBubbleNotifMessage(statusCode);
+    }
+
+
+
     return (
         <div className={styles['task-list-container']}>
             {hasUserChanged ? <Loader message={'Loading your tasks...'}/> : <div>
@@ -60,7 +105,7 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
                                         <summary className={styles['summary-box']} {...markedTaskStyle(task)} >
 
                                             <label className={styles["glass-checkbox"]}>
-                                                <input className={styles['task-status-checkbox']} type='checkbox' checked={task.status} onChange={(e) => {updateTask({...task, status: e.target.checked})}}/>
+                                                <input className={styles['task-status-checkbox']} type='checkbox' checked={task.status} onChange={(e) => onToggle(e, task)}/>
                                                 <span className={styles["checkmark"]}>
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                                     <polyline points="20 6 9 17 4 12"></polyline>
@@ -72,7 +117,7 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
 
                                             <div className={styles['buttons-container']} >
                                                 <button className={styles['button']} onClick={(e) => {e.preventDefault();taskRef.current = task;setActiveDialog('task-editor');}}><AiOutlineEdit className={styles['edit-icon']} /></button>
-                                                <button className={styles['button']} onClick={(e) => {e.preventDefault();deleteTask(task);}} ><AiOutlineDelete className={styles['delete-icon']} /></button>
+                                                <button className={styles['button']} onClick={(e) => onDelete(e, task)} ><AiOutlineDelete className={styles['delete-icon']} /></button>
                                             </div>
 
                                         </summary>
@@ -98,6 +143,7 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
                 ) :
                 null
             }
+            {showBubbleNotif && <BubbleNotif message={bubbleNotifMessage} onClose={() => {setShowBubbleNotif(false)}}/>}
         </div>
     )
 }

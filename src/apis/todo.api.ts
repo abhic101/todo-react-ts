@@ -18,7 +18,7 @@ const todoEndpoints = {
         methods: ['get', 'post'] as HTTPMethod[]
     } as Endpoint,
     SINGLE_TASK: {
-        path: '/',
+        path: '/*',
         dynamic: true,
         methods: ['get', 'patch', 'delete'] as HTTPMethod[]
     }  as Endpoint,

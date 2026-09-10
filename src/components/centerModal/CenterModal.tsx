@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import ErrorBoundary from './ErrorBoundary'
 import * as FocusScope from '@radix-ui/react-focus-scope';
+import { FaTimes as CloseIcon } from 'react-icons/fa';
 import styles from './CenterModal.module.css'
 
 const BOUNDARY_ERROR_TIMEOUT = 2000;
@@ -51,7 +52,7 @@ function CenterModal({closeRequested, onClose, children}: Props) {
                     <FocusScope.Root trapped loop asChild>
                         <div className={getClassName('panel')} onClick={(e) => e.stopPropagation()}>
                             
-                            <div className={styles['close-button-container']}><button onClick={onClose} tabIndex={-1}>x</button></div>
+                            <div className={styles['close-button-container']}><button onClick={onClose} tabIndex={-1}><CloseIcon/></button></div>
                             
                             <ErrorBoundary
                                 fallback={<p className={styles['error-boundary-message']}><span className={styles['error-span']}>🚧</span>&nbsp; Under Construction &nbsp;<span className={styles['error-span']}>🚧</span></p>}
