@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUpdateProfile, useGetAccount } from '@/hooks/accountQueryHooks';
 import type { ModalData } from '../index.componentTypes';
-import { AiFillEdit as EditIcon, AiFillCloseCircle as NotEditIcon } from "react-icons/ai";
+import { AiFillEdit as EditIcon, AiFillCloseCircle as CancelEditIcon } from "react-icons/ai";
 import { accountErrToCode, StatusCodeMap as ErrCode } from '@errors';
 import { FaSave as SaveIcon } from "react-icons/fa";
 import ErrorPanel, {type AvailableKind} from './errorPanels/ErrorPanel';
@@ -82,6 +82,27 @@ function SettingsDialog({onClose, changeDialog}: Props) {
         }
     }
 
+    async function onEdit(e: MouseEvent<HTMLButtonElement>, field: 'firstname' |  'lastname') {
+        e.preventDefault();
+        setEditField((prev) => {
+            const newObj = {...prev};
+            newObj[field] = true;
+            return newObj;
+        });
+        setFocus(field);
+    }
+
+    async function onCancel(e: MouseEvent<HTMLButtonElement>, field: 'firstname' |  'lastname') {
+        e.preventDefault();
+        if (profile)
+            setValue(field, profile[field]);
+        setEditField((prev) => {
+            const newObj = {...prev};
+            newObj[field] = false;
+            return newObj;
+        });
+    }
+
     function panelKind(errCode: number): AvailableKind {
         if (errCode === ErrCode.unreachable) return 'connectionIssue';
         else if (errCode === ErrCode.timeout) return 'serverBusy';
@@ -124,9 +145,16 @@ function SettingsDialog({onClose, changeDialog}: Props) {
                     <div className={styles['input-group-interactibles']}>
                         <input {...register('firstname', {value: profile?.firstname})} className={'dialog-text-input ' + styles['text-input']} disabled={isSubmitting || !editField.firstname} placeholder="Firstname" autoFocus/>
 
-                        <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, firstname:!prev.firstname}));setFocus('firstname')}} disabled={isSubmitting}>
-                            {editField.firstname ? <NotEditIcon onClick={(e) => {e.preventDefault;setValue('firstname', profile.firstname)}}/> : <EditIcon/>}
+                        {editField.firstname ? 
+                        <button className={styles['input-state-button']}  onClick={(e) => {onCancel(e, 'firstname')}} disabled={isSubmitting}>
+                            <CancelEditIcon />
                         </button>
+                        :
+                        <button className={styles['input-state-button']} onClick={(e) => {onEdit(e, 'firstname')}} disabled={isSubmitting}>
+                            
+                            <EditIcon/>
+                        </button>
+                        }
                     </div>
 
 
@@ -149,9 +177,16 @@ function SettingsDialog({onClose, changeDialog}: Props) {
                     </div>
                     <div className={styles['input-group-interactibles']}>
                         <input {...register('lastname', {value: profile?.lastname || ''})} className={'dialog-text-input ' + styles['text-input']} disabled={isSubmitting || !editField.lastname} placeholder="Lastname" />
-                        <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, lastname: !editField.lastname}));setFocus('lastname')}} disabled={isSubmitting}>
-                            {editField.lastname ? <NotEditIcon onClick={(e) => {e.preventDefault;setValue('lastname', profile.lastname)}}/> : <EditIcon/>}
+
+                        {editField.lastname ? 
+                        <button className={styles['input-state-button']}  onClick={(e) => {onCancel(e, 'lastname')}} disabled={isSubmitting}>
+                            <CancelEditIcon />
                         </button>
+                        :
+                        <button className={styles['input-state-button']} onClick={(e) => {onEdit(e, 'lastname')}} disabled={isSubmitting}>
+                            <EditIcon/>
+                        </button>
+                        }
                     </div>
                     {(editField.lastname || editField.firstname) && (
                         <button type='submit' className={styles['save-button']}   disabled={isSubmitting}><SaveIcon className={styles['save-icon']} /> <span>Save </span></button>
