@@ -15,10 +15,8 @@ export function useUpdateProfile() {
     return useMutation({
         mutationFn: (profileUpdate: Profile) => AccountQueries.updateProfile(profileUpdate),
         onSuccess: () => {
-            client.invalidateQueries({queryKey: ['todo']});
-            client.setQueryData(['todo'], []);
+            client.invalidateQueries({queryKey: ['account']});
             client.invalidateQueries({queryKey: ['user']});
-            client.setQueryData(['user'], defaultUser);
         }
     })
 }
@@ -35,8 +33,14 @@ export function useUpdateUsername() {
 }
 
 export function useUpdatePassword() {
+    const client = useQueryClient();
     return useMutation({
-        mutationFn: (passwordUpdate: Password) => AccountQueries.updatePassword(passwordUpdate)
+        mutationFn: (passwordUpdate: Password) => AccountQueries.updatePassword(passwordUpdate),
+        onSuccess: () => {
+            client.invalidateQueries({queryKey: ['user']});
+            client.invalidateQueries({queryKey: ['account']});
+            client.setQueryData(['todos'], []);
+        }
     })
 }
 
