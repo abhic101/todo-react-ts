@@ -1,0 +1,21 @@
+.error-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    animation: fadeIn .5s ease-in-out forwards;
+}
+.icon{
+    height: 64px;
+    opacity: .6;
+}
+.message {
+    margin: 10px 0 0 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes fadeIn { 
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}

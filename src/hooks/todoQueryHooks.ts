@@ -5,6 +5,7 @@ function useGetAllTask() {
     return useQuery({
         queryKey: ['todos'],
         queryFn: TodoQueries.getAllTask,
+        refetchOnWindowFocus: false,
         retry: false
     })
 }

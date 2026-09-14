@@ -34,7 +34,7 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
         formState: {errors, isSubmitting}
     } = useForm<FormType>({
         resolver: zodResolver(usernameUpdateSchema),
-        mode: 'onTouched'
+        mode: 'onChange'
     });
     const [httpNotif, setHttpNotif] = useState<string | null>(null);
 
@@ -70,20 +70,26 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
         try {
             await updateUsernameMutation.mutateAsync(data);
             setHttpNotif('Username Updated');
-            await new Promise((resolve) => setTimeout(resolve, 500));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             changeDialog('settings');
         } catch(err) {
+            console.log(err);
             const errCode = accountErrToCode(err as Error);
             handleUsernameUpdateError(errCode);
         }
     }
 
     const {onChange: rhfUsernameOnchange, ...usernameRest} = register('newUsername');
+
     async function checkUsernameAvailability(username: string) {
-        if (errors.newUsername) return;
-        try {
-            await checkUsernameMutation.mutateAsync(username);
+        if (username === user?.username) {
             clearErrors('newUsername');
+            setError('newUsername', {type: 'onChange', message: 'Same as current username', });
+            return;
+        }
+        try {
+            usernameUpdateSchema.shape.newUsername.parse(username);
+            await checkUsernameMutation.mutateAsync(username);
         } catch(err) {
             const errCode = accountErrToCode(err as Error);
             if (errCode === 409) {
@@ -134,9 +140,9 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
                     </div>
                     
                     <input {...usernameRest} onChange={async (e) => {
-                        rhfUsernameOnchange(e);
-                        await checkUsernameAvailability(getValues('newUsername'));
-                    }} className={'dialog-text-input ' + styles["update-text-input"]} style={borderColorOnError('newUsername')}  placeholder='Enter your username' disabled={isSubmitting} autoFocus />
+                        await rhfUsernameOnchange(e);
+                        checkUsernameAvailability(getValues('newUsername'));
+                    }} className={'dialog-text-input ' + styles["update-text-input"]} style={borderColorOnError('newUsername')}  placeholder={'Current Username: '+user?.username} disabled={isSubmitting} autoFocus />
                 </div>
 
     {/* Password input group: label, input field and error message */}
@@ -170,17 +176,18 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
                         <button className={styles["save-button"]} type="submit" disabled={isSubmitting}>
                             <span>
                                 <span className={styles['back-icon']} >
-                                    {isSubmitting ?
-                                        <span className={styles.loader}></span>
-                                        :
-                                        <SaveIcon className={styles.icon} />
-                                    }
+                                    <SaveIcon className={styles.icon} />
                                 </span>
                                 <span className={styles['button-label']}>Save</span>
                             </span>
                         </button>                        
                     </div>
             </form>
+            {isSubmitting &&
+                <div className={styles['progress-loader-container']}>
+                    <span className={styles["progress-loader"]}></span>
+                </div>
+            }
         </div>
     )
 }

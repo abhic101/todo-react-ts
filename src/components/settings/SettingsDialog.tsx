@@ -6,6 +6,7 @@ import type { ModalData } from '../index.componentTypes';
 import { AiFillEdit as EditIcon, AiFillCloseCircle as NotEditIcon } from "react-icons/ai";
 import { accountErrToCode, StatusCodeMap as ErrCode } from '@errors';
 import { FaSave as SaveIcon } from "react-icons/fa";
+import ErrorPanel, {type AvailableKind} from './errorPanels/ErrorPanel';
 import { profileUpdateSchema, type ProfileFormType } from './settings.data';
 import editProfileLogo from '@assets/edit-profile-logo.png';
 import styles from './SettingsDialog.module.css';
@@ -80,9 +81,16 @@ function SettingsDialog({onClose, changeDialog}: Props) {
             handleProfileUpdateError(errCode);
         }
     }
+
+    function panelKind(errCode: number): AvailableKind {
+        if (errCode === ErrCode.unreachable) return 'connectionIssue';
+        else if (errCode === ErrCode.timeout) return 'serverBusy';
+        else if (errCode === 404) return 'profileNotFound';
+        return 'underMaintainence';
+    }
     
     return (
-        <div className={'dialog-root ' + styles["signup-root"] + (isSubmitting ? " " + styles['disabled'] : "" )}>
+        <div className={'dialog-root ' + styles["settings-root"] + (isSubmitting ? " " + styles['disabled'] : "" )}>
 
 {/* Header, subheader and logo     */}
             <div className={'dialog-logo-container ' + styles['logo-container']}>
@@ -98,7 +106,7 @@ function SettingsDialog({onClose, changeDialog}: Props) {
                 </div>
             ) : (<></>)}
             
-            { profile ? (
+            { isProfileSuccess ? (
             <form className={'dialog-form ' + styles['form']} onSubmit={handleSubmit(onSubmit)}>
 
     {/* fistname input group */}
@@ -116,14 +124,12 @@ function SettingsDialog({onClose, changeDialog}: Props) {
                     <div className={styles['input-group-interactibles']}>
                         <input {...register('firstname', {value: profile?.firstname})} className={'dialog-text-input ' + styles['text-input']} disabled={isSubmitting || !editField.firstname} placeholder="Firstname" autoFocus/>
 
-                        <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, firstname:!prev.firstname}));setFocus('firstname')}}>
+                        <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, firstname:!prev.firstname}));setFocus('firstname')}} disabled={isSubmitting}>
                             {editField.firstname ? <NotEditIcon onClick={(e) => {e.preventDefault;setValue('firstname', profile.firstname)}}/> : <EditIcon/>}
                         </button>
                     </div>
 
-                    {(editField.firstname) && (
-                        <button type='submit' className={styles['save-button']} ><SaveIcon className={styles['save-icon']}/> <span>Save </span></button>
-                    )}
+
                     
                 </div>
 
@@ -143,12 +149,12 @@ function SettingsDialog({onClose, changeDialog}: Props) {
                     </div>
                     <div className={styles['input-group-interactibles']}>
                         <input {...register('lastname', {value: profile?.lastname || ''})} className={'dialog-text-input ' + styles['text-input']} disabled={isSubmitting || !editField.lastname} placeholder="Lastname" />
-                        <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, lastname: !editField.lastname}));setFocus('lastname')}}>
+                        <button className={styles['input-state-button']} onClick={(e) => {e.preventDefault();setEditField((prev) => ({...prev, lastname: !editField.lastname}));setFocus('lastname')}} disabled={isSubmitting}>
                             {editField.lastname ? <NotEditIcon onClick={(e) => {e.preventDefault;setValue('lastname', profile.lastname)}}/> : <EditIcon/>}
                         </button>
                     </div>
-                    {(editField.lastname) && (
-                        <button type='submit' className={styles['save-button']} ><SaveIcon className={styles['save-icon']}/> <span>Save </span></button>
+                    {(editField.lastname || editField.firstname) && (
+                        <button type='submit' className={styles['save-button']}   disabled={isSubmitting}><SaveIcon className={styles['save-icon']} /> <span>Save </span></button>
                     )}
                         
                 </div>
@@ -159,7 +165,7 @@ function SettingsDialog({onClose, changeDialog}: Props) {
                 <div className={'dialog-input-group ' + ' ' + styles['input-group'] + ' ' + styles['prompt-group']}>
     
                     <p className={'dialog-input-label ' + styles['input-label']}>Username:</p>
-                    <button className={styles['prompt-button']} onClick={(e) => {e.preventDefault();changeDialog('username-updator')}}>
+                    <button className={styles['prompt-button']} onClick={(e) => {e.preventDefault();changeDialog('username-updator')}} disabled={isSubmitting}>
                         Change Username
                     </button>
                 </div>
@@ -167,15 +173,31 @@ function SettingsDialog({onClose, changeDialog}: Props) {
     
                     <p className={'dialog-input-label ' + styles['input-label']}>Password:</p>
                     
-                    <button className={styles['prompt-button']} onClick={(e) => {e.preventDefault();changeDialog('password-updator')}}>
+                    <button className={styles['prompt-button']} onClick={(e) => {e.preventDefault();changeDialog('password-updator')}} disabled={isSubmitting}>
                         Change Password
                     </button>
                 </div>
 
             </form>
-            ) : (
-                <p className={styles['no-profile-message']}> No Profile found </p>
-            )}
+            ) :
+
+    // If no profile data is found
+            isProfileLoading ?
+            <div className={styles['accounts-loader']}>
+                <div className={styles["loader"]}></div>
+            </div>
+            :
+            <div className={styles['profile-not-loaded-msg']}>
+                <ErrorPanel kind={panelKind(profileError ? accountErrToCode(profileError) : 500)} />
+                {/* <img className={styles['profile-not-found-icon']} src={NotFoundIcon}/>
+                <p className={styles['no-profile-message']}> No user profile found ! </p> */}
+            </div>
+            }
+            {(updateProfileMutation.isPending && !isProfileLoading) &&
+                <div className={styles['progress-loader-container']}>
+                    <span className={styles["progress-loader"]}></span>
+                </div>
+            }
         </div>
     )
 }

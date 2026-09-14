@@ -7,7 +7,8 @@ export function useMe() {
         queryKey: ['user'],
         queryFn: AuthQueries.getMe,
         retry: false,
-        staleTime: Infinity
+        staleTime: Infinity,
+        refetchOnWindowFocus: false
     })
 };
 
@@ -18,7 +19,8 @@ export function useLogin() {
         retry: false,
         onSuccess: (data) => {
             client.setQueryData(['user'], data);
-            client.refetchQueries({queryKey: ['todos']});
+            client.invalidateQueries({queryKey: ['todos']});
+            client.invalidateQueries({queryKey: ['account']});
         },
     })
 }
@@ -42,8 +44,7 @@ export function useSignup() {
 
 export function useCheckUsername() {
     return useMutation({
-        mutationFn: (username: string) => AuthQueries.checkUsername(username),
-        throwOnError: false,
+        mutationFn: (username: string) => AuthQueries.checkUsername(username)
     })
 }
 

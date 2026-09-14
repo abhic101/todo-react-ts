@@ -54,7 +54,7 @@ function ChangePasswordDialog({changeDialog}: Props) {
         try {
             await updatePasswordMutation.mutateAsync(data);
             setHttpNotif('Password Updated. Please login again');
-            await new Promise((resolve) => setTimeout(resolve, 500));
+            await new Promise((resolve) => setTimeout(resolve, 1500));
             changeDialog('login');
         } catch (err) {
             const errCode = accountErrToCode(err as Error);
@@ -63,6 +63,7 @@ function ChangePasswordDialog({changeDialog}: Props) {
     }
 
     const {onChange: rhfOnChangeNewPassword, ...restNewPassword} = register('newPassword');
+
     async function triggerPasswordValidation() {
         if (touchedFields.confirmNewPassword) trigger('confirmNewPassword');
         return;
@@ -134,7 +135,7 @@ function ChangePasswordDialog({changeDialog}: Props) {
                     <div className={styles['multiple-text-input-container']} style={borderColorOnError('newPassword')}>
                         
                         <input {...restNewPassword} onChange={async (e) => {
-                            rhfOnChangeNewPassword(e);
+                            await rhfOnChangeNewPassword(e);
                             await triggerPasswordValidation();
                         }} className={`dialog-text-input ${styles['text-input']} ${styles['text-input-top']}`} type='password' disabled={isSubmitting} placeholder='Enter New Password'/>
                         
@@ -155,17 +156,19 @@ function ChangePasswordDialog({changeDialog}: Props) {
                         <button className={styles["save-button"]} type="submit" disabled={isSubmitting}>
                             <span>
                                 <span className={styles['back-icon']} >
-                                    {isSubmitting ?
-                                        <span className={styles.loader}></span>
-                                        :
-                                        <SaveIcon className={styles.icon} />
-                                    }
+                                    <SaveIcon className={styles.icon} />
                                 </span>
                                 <span className={styles['button-label']}>Save</span>
                             </span>
                         </button>                        
                     </div>
             </form>
+
+             {isSubmitting &&
+                <div className={styles['progress-loader-container']}>
+                    <span className={styles["progress-loader"]}></span>
+                </div>
+            }
         </div>
     )
 }

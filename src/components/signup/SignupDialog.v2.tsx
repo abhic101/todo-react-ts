@@ -76,8 +76,8 @@ function SignupDialog ({onClose, changeDialog}: Props) {
     }
 
     const usernameAvailabilityCheck = async (username: string) => {
-        if (errors.username) return;
         try {
+            schema.sourceType().shape.username.parse(username);
             await checkUsernameMutation.mutateAsync(username);
             setUsernameAvailability(null);
         } catch (err) {
