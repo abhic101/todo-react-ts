@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { HTTPMethod, Endpoint } from "./apis.types";
+import type { HTTPMethod, Endpoint } from "../apis.types";
 
 const todoAPI = axios.create({
     baseURL: `${import.meta.env.VITE_API_BASE_URL}/todo`,
@@ -18,7 +18,7 @@ const todoEndpoints = {
         methods: ['get', 'post'] as HTTPMethod[]
     } as Endpoint,
     SINGLE_TASK: {
-        path: '/*',
+        path: '/',
         dynamic: true,
         methods: ['get', 'patch', 'delete'] as HTTPMethod[]
     }  as Endpoint,
@@ -37,8 +37,19 @@ function isTodoEndpointIndempotent(endpointPath: string, method: HTTPMethod) {
     return false;
 }
 
+type Task = {
+    _id?: string | undefined;
+    task_name: string;
+    task_details?: string | undefined;
+    status?: boolean;
+}
+
 export {
     todoAPI,
     todoEndpoints,
     isTodoEndpointIndempotent
 };
+
+export type {
+    Task
+}

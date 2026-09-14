@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAccountContext } from '@hooks';
+import { useUpdateProfile, useGetAccount } from '@/hooks/accountQueryHooks';
 import type { ModalData } from '../index.componentTypes';
 import { AiFillEdit as EditIcon, AiFillCloseCircle as NotEditIcon } from "react-icons/ai";
-import { ActiveModalRenderer } from '@components';
+import { accountErrToCode, StatusCodeMap as ErrCode } from '@errors';
 import { FaSave as SaveIcon } from "react-icons/fa";
 import { profileUpdateSchema, type ProfileFormType } from './settings.data';
 import editProfileLogo from '@assets/edit-profile-logo.png';
@@ -16,7 +16,14 @@ interface Props {
 }
 
 function SettingsDialog({onClose, changeDialog}: Props) {
-    const {profile, updateProfile} = useAccountContext();
+    const {
+        data: profile,
+        isLoading: isProfileLoading,
+        isError: isProfileError,
+        isSuccess: isProfileSuccess,
+        error: profileError
+    } = useGetAccount();
+    const updateProfileMutation = useUpdateProfile();
     const {
         register,
         handleSubmit,
@@ -34,11 +41,27 @@ function SettingsDialog({onClose, changeDialog}: Props) {
         firstname: false,
         lastname: false
     });
-    const [currentSubDialog, setCurrentSubDialog] = useState<ModalData.AvailableDialogs | null>(null);
-    () => {onClose()}
+
+    function handleProfileUpdateError(errCode: number) {
+        switch (errCode) {
+            case ErrCode.timeout:
+                setHttpNotif('Server Busy. Please try later');
+                return;
+            case ErrCode.unreachable:
+                setHttpNotif('Failed! Please check your internet.')
+                return;
+            case 401:
+                setHttpNotif('Account Error! Please login again');
+                return;
+            case 403:
+                setHttpNotif('Account Error! Please login again');
+                return;
+            default:
+                setHttpNotif('Internal Server Error.');
+        }
+    }
 
     async function onSubmit(data: ProfileFormType) {
-        let profileRes: number | undefined;
         setHttpNotif(null);
         const isFirstnameSame = profile?.firstname === getValues('firstname');
         const isLastnameSame = profile?.lastname === getValues('lastname');
@@ -46,21 +69,15 @@ function SettingsDialog({onClose, changeDialog}: Props) {
             setHttpNotif('No Changes');
             return;
         }
-        else {
-            profileRes = await updateProfile(data);
-        }
-
-        if (!profileRes) {
-            setHttpNotif('Unknown Error');
-        } else if (profileRes === 200 || profileRes === 201) {
+        try {
+            await updateProfileMutation.mutateAsync(data);
             setHttpNotif('Profile Updated');
             setEditField(() => {
                 return {firstname: false, lastname: false}
             });
-        } else if (profileRes >= 400 || profileRes <= 403) {
-            setHttpNotif('Unauthorized');
-        } else {
-            setHttpNotif('Internal Sever Error');
+        } catch (err) {
+            const errCode = accountErrToCode(err as Error);
+            handleProfileUpdateError(errCode);
         }
     }
     
@@ -159,8 +176,6 @@ function SettingsDialog({onClose, changeDialog}: Props) {
             ) : (
                 <p className={styles['no-profile-message']}> No Profile found </p>
             )}
-
-            {currentSubDialog && <ActiveModalRenderer activeDialog={currentSubDialog} setActiveDialog={setCurrentSubDialog} dialogProps={{setParentNotif: setHttpNotif}}/>}
         </div>
     )
 }

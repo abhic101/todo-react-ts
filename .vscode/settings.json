@@ -1,0 +1,8 @@
+{
+    "folder-customization.folders": [
+        {
+            "path": "front\\src\\components\\",
+            "color": "foldercustomization.AnsiColor12"
+        }
+    ]
+}

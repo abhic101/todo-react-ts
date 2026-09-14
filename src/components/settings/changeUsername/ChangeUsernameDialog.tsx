@@ -1,6 +1,8 @@
 import { useState, type SetStateAction, type CSSProperties, type Dispatch } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuthContext, useAccountContext } from '@hooks';
+import { useUpdateUsername } from '@/hooks/accountQueryHooks';
+import { useMe, useCheckUsername } from '@/hooks/authQueryHooks';
+import { accountErrToCode, StatusCodeMap as ErrCode } from '@errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usernameUpdateSchema, type UsernameFormType as FormType } from '../settings.data'
 import { ModalData } from '../../index.componentTypes';
@@ -14,12 +16,20 @@ interface Props {
 }
 
 function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
-    const { updateUsername } = useAccountContext();
-    const {user, checkUsername} = useAuthContext();
+    const {
+        data: user,
+        isSuccess: isUserSuccess,
+        isLoading: isUserLoading,
+        isError: isUserError,
+        error: userError,
+    } = useMe();
+    const checkUsernameMutation = useCheckUsername();
+    const updateUsernameMutation = useUpdateUsername();
     const {
         register,
         handleSubmit,
         setError,
+        clearErrors,
         getValues,
         formState: {errors, isSubmitting}
     } = useForm<FormType>({
@@ -28,35 +38,57 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
     });
     const [httpNotif, setHttpNotif] = useState<string | null>(null);
 
+    function handleUsernameUpdateError(errCode: number) {
+        switch (errCode) {
+            case ErrCode.timeout:
+                setHttpNotif('Server Busy. Please try later');
+                return;
+            case ErrCode.unreachable:
+                setHttpNotif('Failed! Please check your internet.')
+                return;
+            case 401:
+                setHttpNotif('Invalid Password');
+                return;
+            case 403:
+                setHttpNotif('Account Error! Please login again');
+                return;
+            case 409:
+                setHttpNotif('Sorry! Username is taken.');
+                break;
+            default:
+                setHttpNotif('Internal Server Error.');
+        }
+    }
+
     async function onSubmit(data: FormType) {
-        let updateRes: number | undefined;
         setHttpNotif(null);
-        if (data.newUsername === user.username) {
+        if (data.newUsername === user?.username) {
             setHttpNotif('New username is same as current');
             return;
-        } else {
-            updateRes = await updateUsername(data);
         }
-        if (!updateRes) {
-            setHttpNotif('Unknown Error');
-        } else if (updateRes === 200 || updateRes === 201) {
+
+        try {
+            await updateUsernameMutation.mutateAsync(data);
             setHttpNotif('Username Updated');
             await new Promise((resolve) => setTimeout(resolve, 500));
-            setParentNotif && setParentNotif('Username Updated');
             changeDialog('settings');
-        } else if (updateRes === 401) {
-            setHttpNotif('Incorrect Password');
-        } else {
-            setHttpNotif('Internal Server Error')
+        } catch(err) {
+            const errCode = accountErrToCode(err as Error);
+            handleUsernameUpdateError(errCode);
         }
     }
 
     const {onChange: rhfUsernameOnchange, ...usernameRest} = register('newUsername');
     async function checkUsernameAvailability(username: string) {
         if (errors.newUsername) return;
-        const availRes = await checkUsername(username);
-        if (availRes === 409) {
-            setError('newUsername', {type: 'onChange', message: 'Username not available', });
+        try {
+            await checkUsernameMutation.mutateAsync(username);
+            clearErrors('newUsername');
+        } catch(err) {
+            const errCode = accountErrToCode(err as Error);
+            if (errCode === 409) {
+                setError('newUsername', {type: 'onChange', message: 'Username not available', });
+            }
         }
     }
 
@@ -101,9 +133,9 @@ function ChangeUsernameDialog({changeDialog, setParentNotif}: Props) {
 
                     </div>
                     
-                    <input {...usernameRest} onChange={(e) => {
+                    <input {...usernameRest} onChange={async (e) => {
                         rhfUsernameOnchange(e);
-                        checkUsernameAvailability(getValues('newUsername'));
+                        await checkUsernameAvailability(getValues('newUsername'));
                     }} className={'dialog-text-input ' + styles["update-text-input"]} style={borderColorOnError('newUsername')}  placeholder='Enter your username' disabled={isSubmitting} autoFocus />
                 </div>
 

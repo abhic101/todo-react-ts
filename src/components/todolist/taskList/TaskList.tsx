@@ -1,7 +1,13 @@
 import { useRef, useEffect, useState} from 'react';
-import type { ReactNode, CSSProperties, SetStateAction, Dispatch, ChangeEvent, MouseEvent } from 'react';
-import { useTodoContext, type TodoTask, useAuthContext } from '@hooks';
+import type { CSSProperties, SetStateAction, Dispatch, ChangeEvent, MouseEvent } from 'react';
+import {
+    useGetAllTask,
+    useUpdateOneTask,
+    useDeleteOneTask,
+    type Task
+} from '../../../hooks/todoQueryHooks';
 import { ActiveModalRenderer, RenderConfirmDialog, Loader, BubbleNotif } from '@components';
+import { todoErrToCode } from '@errors';
 import { ModalData } from '../../index.componentTypes';
 import { AiOutlineDelete , AiOutlineEdit } from "react-icons/ai";
 import EmptyIcon from '@assets/empty-box.webp'
@@ -15,27 +21,42 @@ interface Props {
     setActiveDialog: Dispatch<SetStateAction<AvailableDialogs>>;
 }
 
-function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
+function TaskList({activeDialog, setActiveDialog}: Props) {
     const [showBubbleNotif, setShowBubbleNotif] = useState<boolean>(false);
     const bubbleNotifMessage = useRef('');
+    const taskRef = useRef<Task>(undefined);
     const {
-        todoList,
-        updateTask,
-        deleteTask,
-        showSaveListDialog,
-        mergeUnsavedList,
-        cancelMerge,
-    } = useTodoContext();
-    const { hasUserChanged } = useAuthContext();
-    const taskRef = useRef<TodoTask>(undefined);
+        data: todos,
+        isError: isTodoError,
+        isLoading: isTodoLoading,
+        isSuccess: isTodoSuccess,
+        error: todoError,
+        status: todoStatus
+    } = useGetAllTask();
+    const updateMutation = useUpdateOneTask();
+    const deleteMutation = useDeleteOneTask();
 
     useEffect(() => {
         if (!activeDialog){
             taskRef.current = undefined;
         }
-    }, [activeDialog])
+    }, [activeDialog]);
 
-    function markedTaskStyle(task: TodoTask) {
+    useEffect(() => {
+        if (updateMutation.isError) {
+            const statusCode = updateMutation.error ? todoErrToCode(updateMutation.error): 500;
+            setBubbleNotifMessage(statusCode);
+            setShowBubbleNotif(true);
+        }
+        if (deleteMutation.isError) {
+            const statusCode = deleteMutation.error ? todoErrToCode(deleteMutation.error): 500;
+            setBubbleNotifMessage(statusCode);
+            setShowBubbleNotif(true);
+        }
+
+    }, [updateMutation.isError, deleteMutation.isError])
+
+    function markedTaskStyle(task: Task) {
         let attr = {};
         if (task.status) {
             attr = {
@@ -67,49 +88,37 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
         }
     }
 
-    async function onToggle (e: ChangeEvent<HTMLInputElement>, task: TodoTask) {
-        const nextStatus = e.target.checked;
-        const statusCode = await updateTask({...task, status: nextStatus});
-
-        if (statusCode === 200) return;
-        else {
-            setBubbleNotifMessage(statusCode);
-            setShowBubbleNotif(true);
-        }
+    async function onToggle (e: ChangeEvent<HTMLInputElement>, task: Task) {
+        const newStatus = e.target.checked;
+        updateMutation.mutate({...task, status: newStatus});
     }
 
-    async function onDelete(e: MouseEvent<HTMLButtonElement>, task: TodoTask) {
+    async function onDelete(e: MouseEvent<HTMLButtonElement>, task: Task) {
         e.preventDefault();
-        const statusCode = await deleteTask(task);
-
-        if (statusCode === 200) return;
-        else {
-            setBubbleNotifMessage(statusCode);
-            setShowBubbleNotif(true);
-        }
+        deleteMutation.mutate(task);
     }
 
-    async function mergerUnsavedListWrapper() {
-        const statusCode = await mergeUnsavedList();
+    // async function mergerUnsavedListWrapper() {
+    //     const statusCode = await mergeUnsavedList();
 
-        if (statusCode === 200 || statusCode === 201) return;
-        else {
-            setBubbleNotifMessage(statusCode);
-            setShowBubbleNotif(true);
-        }
-    }
+    //     if (statusCode === 200 || statusCode === 201) return;
+    //     else {
+    //         setBubbleNotifMessage(statusCode);
+    //         setShowBubbleNotif(true);
+    //     }
+    // }
 
     return (
         <div className={styles['task-list-container']}>
-            {hasUserChanged ? <Loader message={'Loading your tasks...'}/> : <div>
-                { !todoList.length ? 
+            {isTodoLoading ? <Loader message={'Loading your tasks...'}/> : <div>
+                { !todos?.length ? 
                     <div className={styles['no-task-container']}>
                         <img className={styles['no-task-image']} src={EmptyIcon} /> <span> No task found </span>
                         {/* <p className={styles['no-task-message']}>Add tasks to get started</p> */}
                     </div>
                     :
                     <ul className={styles['task-list-table']}>
-                        {todoList.map((task) => {
+                        {todos?.map((task) => {
                             return (
                                 <li className={styles['task-list-item']} key={task._id}>
 
@@ -150,11 +159,11 @@ function TaskList({activeDialog, setActiveDialog}: Props): ReactNode {
                 ) :
                 <></>
             }
-            {showSaveListDialog ? (
+            {/* {showSaveListDialog ? (
                 <RenderConfirmDialog message={"Some unsaved tasks are found in the system. Save them to account?"} onConfirm={mergerUnsavedListWrapper} onClose={cancelMerge} onCancel={cancelMerge} />
                 ) :
                 null
-            }
+            } */}
             {showBubbleNotif && <BubbleNotif message={bubbleNotifMessage.current} onClose={() => {setShowBubbleNotif(false)}}/>}
         </div>
     )

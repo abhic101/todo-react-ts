@@ -1,6 +1,6 @@
-import { isAuthEndpointIndempotent } from './auth.api';
-import { isTodoEndpointIndempotent } from './todo.api';
-import { isAccountEndpointIndempotent } from './account.api';
+import { isAuthEndpointIndempotent } from './auth/auth.api';
+import { isTodoEndpointIndempotent } from './todo/todo.api';
+import { isAccountEndpointIndempotent } from './account/account.api';
 import type { HTTPMethod } from './apis.types';
 
 function isIndempotent(baseURL: string | null, endpointPath: string | null, method: HTTPMethod | null) {
@@ -24,4 +24,6 @@ function isIndempotent(baseURL: string | null, endpointPath: string | null, meth
     return false;
 }
 
-export default isIndempotent
+export {
+    isIndempotent
+}

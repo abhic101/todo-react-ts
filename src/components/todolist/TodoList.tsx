@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { ModalData } from '../index.componentTypes';
-import { TodoProvider} from '@context';
 import TaskList from './taskList/TaskList';
 import { MdAssignmentAdd as AddTaskIcon } from "react-icons/md";
 import ErrorBoundary from './ErrorBoundary';
@@ -20,7 +19,6 @@ function TodoList() {
 
     return (
         <main>
-            <TodoProvider>
                 <ErrorBoundary fallback={<p>Error Occurred at error boundary of todoList</p>}>
                     <div className={styles['add-task-container']} >
                         <button className={styles['add-task-button']} onClick={(e) => {e.preventDefault();setActiveDialog('task-editor')}}>
@@ -34,7 +32,7 @@ function TodoList() {
                     </div>
                     <TaskList activeDialog={activeDialog} setActiveDialog={setActiveDialog}/>
                 </ErrorBoundary>
-            </TodoProvider>
+
         </main>
     )
 }

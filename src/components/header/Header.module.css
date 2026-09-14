@@ -2,13 +2,12 @@
     position: relative;
     display: flex;
     align-items: center;
-    color: white;
+    color: rgb(240, 240, 240);
     height: 70px;
     backdrop-filter: blur(25px);
     background-color: rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 10px 3px rgba(19, 19, 19, 0),
         inset 0 -5px 20px  rgba(0, 0, 0, 0.548);
-    color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -32,6 +31,7 @@
     align-items: center;
     font-size: 35px;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.11);
+    font-weight: 700;
 }
 
 .logo {
@@ -42,10 +42,21 @@
 }
 .appName_1 {
     margin-left: 10px;
+    background: linear-gradient(
+        rgb(255, 255, 255) 50%,
+        rgb(202, 202, 202) 100%
+    );
+    background-clip: text;
+    color: transparent;
 }
 .appName_2 {
     margin:0;
-    font-weight: 600;
+    background: linear-gradient(
+        rgb(145, 255, 255) 10%,
+        rgb(46, 198, 197) 50%
+    );
+    background-clip: text;
+    color: transparent;
 }
 
 .slogan-container {
@@ -77,7 +88,7 @@
         }
 
         .logo {
-            width: 60px;
+            width: 70px;
         }
     }
     .slogan-container {

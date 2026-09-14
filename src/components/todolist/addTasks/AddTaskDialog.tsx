@@ -1,7 +1,8 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties, useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTodoContext } from '@hooks';
+import { useAddOneTask, useUpdateOneTask } from '../../../hooks/todoQueryHooks';
+import { authErrToCode } from '@errors';
 import RichTextEditor from '../../richTextEditor/RichTextEditor';
 import { FaTimes as CloseIcon,FaPlus as AddIcon, FaRegSave as SaveIcon  } from "react-icons/fa";
 import { addTaskSchema, type FormData } from './addTasks.data'
@@ -16,7 +17,8 @@ interface Props {
 
 function AddTaskDialog({task, onClose}: Props) {
     const [httpNotif, setHttpNotif] = useState<string | null>(null);
-    const { addTask, updateTask } = useTodoContext();
+    const addTaskMutation = useAddOneTask();
+    const updateTaskMutation = useUpdateOneTask();
     const {
         register, control, handleSubmit, formState: {isSubmitting, errors}
     } = useForm<FormData>({
@@ -24,25 +26,21 @@ function AddTaskDialog({task, onClose}: Props) {
         mode: 'onSubmit'
     })
 
-    async function onSubmit(data: FormData) {
-        let updateRes: number | string = 100;
-        if (task) {
-            const newTask = {...task, task_name: data.task_name, task_details: data.task_details}
-            updateRes = await updateTask(newTask);
+    useEffect(() => {
+        if (addTaskMutation.isError || updateTaskMutation.isError) {
+            const statusCode = addTaskMutation.error ? authErrToCode(addTaskMutation.error) : 500;
+            setHttpNotifMsg(statusCode);
         }
-        else {
-            updateRes = await addTask(data);
-        }
-
-        // On Success
-        if (updateRes === 201 || updateRes === 200){
+        if (addTaskMutation.isSuccess || updateTaskMutation.isSuccess) {
             setHttpNotif('Task Added Successfully');
-            await new Promise((resolve) => {setTimeout(resolve, 500)})
-            onClose();
+            new Promise((resolve) => {setTimeout(resolve, 500)}).then(() => onClose()).catch(() => {});
         }
 
-        // On failure
-        switch (updateRes) {
+
+    }, [addTaskMutation.isError, addTaskMutation.isSuccess, updateTaskMutation.isError, updateTaskMutation.isSuccess])
+
+    function setHttpNotifMsg(statusCode: number) {
+        switch (statusCode) {
             case 604:
                 setHttpNotif('No internet detected');
                 break;
@@ -63,6 +61,16 @@ function AddTaskDialog({task, onClose}: Props) {
                 break;
             default:
                 setHttpNotif('Application Issue! Please contact support');
+        }
+    }
+
+    async function onSubmit(data: FormData) {
+        if (task) {
+            const newTask = {...task, task_name: data.task_name, task_details: data.task_details}
+            await updateTaskMutation.mutateAsync(newTask);
+        }
+        else {
+            await addTaskMutation.mutateAsync(data);
         }
     }
 

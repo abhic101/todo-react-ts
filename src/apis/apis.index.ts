@@ -1,14 +1,25 @@
-import { authAPI, authEndpoints, isAuthEndpointIndempotent } from './auth.api'
-import  { todoAPI, todoEndpoints, isTodoEndpointIndempotent } from './todo.api'
-import { accountAPI, accountEndpoints, isAccountEndpointIndempotent} from './account.api'
+import {
+    authAPI, authEndpoints, isAuthEndpointIndempotent,
+    type User, defaultUser
+} from './auth/auth.api';
 
-import callApi from './callApi.utils';
-import isIndempotent from './isIndempotent.utils';
+import  {
+    todoAPI, todoEndpoints, isTodoEndpointIndempotent,
+    type Task
+} from './todo/todo.api';
+
+import {
+    accountAPI, accountEndpoints, isAccountEndpointIndempotent,
+    type Profile, type Username, type Password
+} from './account/account.api';
+
+import * as TodoQueries from './todo/todo.api.methods';
+import * as AuthQueries from './auth/auth.api.methods';
+import * as AccountQueries from './account/accout.api.methods';
+
+import {isIndempotent} from './api.utils';
 
 import type { HTTPMethod, Endpoint } from './apis.types';
-const ALL_ENDPOINTS = {...authEndpoints, ...accountEndpoints, ...todoEndpoints};
-type AvailableEndpoints = Partial<typeof ALL_ENDPOINTS>;
-type AvailableEndpointsName = keyof AvailableEndpoints;
  
 // APIs Instances and their endpoints
 export {
@@ -18,6 +29,10 @@ export {
     authEndpoints,
     todoAPI,
     todoEndpoints,
+    TodoQueries,
+    AuthQueries,
+    defaultUser,
+    AccountQueries
 };
 
 // Utils
@@ -25,14 +40,16 @@ export {
     isAuthEndpointIndempotent,
     isTodoEndpointIndempotent,
     isAccountEndpointIndempotent,
-    callApi,
     isIndempotent
 }
 
 // Types
 export type {
-    AvailableEndpoints,
-    AvailableEndpointsName,
     HTTPMethod,
-    Endpoint
+    Endpoint,
+    Task,
+    User,
+    Profile,
+    Password,
+    Username
 }

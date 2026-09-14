@@ -1,12 +1,11 @@
-import { useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties} from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { schema, type FormData } from './login.data';
-import { useAuthContext } from '@hooks';
-import { StatusCodeMap as ErrCode } from '@errors';
+import { useLogin } from '../../hooks/authQueryHooks';
+import { StatusCodeMap as ErrCode, authErrToCode } from '@errors';
 import styles from './LoginDialog.v2.module.css';
 import loginLogo from '@assets/fingerprint.png';
-
 
 interface Props {
     onClose: () => void;
@@ -15,7 +14,7 @@ interface Props {
 
 function LoginDialog({onClose, changeDialog}: Props) {
     const [httpNotif, setHttpNotif] = useState<string | null>(null); 
-    const {login} = useAuthContext();
+    const loginMutation = useLogin();
     const {
         register, setFocus, handleSubmit, formState: { errors, isSubmitting }
     } = useForm<FormData>({
@@ -23,36 +22,37 @@ function LoginDialog({onClose, changeDialog}: Props) {
         mode: 'onTouched'
     });
 
+    function handleLoginErrors(errCode: number) {
+        switch(errCode) {
+            case 401:
+                setHttpNotif('Incorrect Username or Password');
+                break;
+            case 403:
+                setHttpNotif('Incorrect Username or Password');
+                break;
+            case ErrCode.timeout:
+                setHttpNotif('Server Busy, please try later.');
+                break;
+            case ErrCode.unreachable:
+                setHttpNotif('Failed due to Connection Issue.');
+                break;
+            default:
+                setHttpNotif('Internal Server Error');
+        }
+        setFocus('username');
+    }
+
+    // Synchronous failure handling on submit
     const onSubmit = async (data: FormData) => {
         setHttpNotif(null);
-        
-        const statusCode = await login(data.username, data.password);
-        if (statusCode === 200) {
+        try {
+            await loginMutation.mutateAsync(data);
             setHttpNotif('Login Success');
             await new Promise(resolve=>setTimeout(resolve, 500));
             onClose();
-        } else {
-            switch(statusCode) {
-                case 401:
-                    setFocus('username');
-                    setHttpNotif('Invalid Credentials');
-                    break;
-                case 403:
-                    setFocus('username');
-                    setHttpNotif('Invalid Credentials');
-                    break;
-                case ErrCode.timeout:
-                    setFocus('username');
-                    setHttpNotif('Server Busy. Please try later');
-                    break;
-                case ErrCode.unreachable:
-                    setFocus('username');
-                    setHttpNotif('Login Failed! Please check your internet');
-                    break;
-                default:
-                    setFocus('username');
-                    setHttpNotif('Internal Server Error');
-            }
+        } catch(err) {
+            const errCode = authErrToCode(err as Error);
+            handleLoginErrors(errCode);
         }
     }
 

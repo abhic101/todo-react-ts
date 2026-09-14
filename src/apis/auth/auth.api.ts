@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { HTTPMethod, Endpoint } from "./apis.types";
+import type { HTTPMethod, Endpoint } from "../apis.types";
 
 const authAPI = axios.create({
     baseURL: `${import.meta.env.VITE_API_BASE_URL}/auth`,
@@ -54,8 +54,22 @@ function isAuthEndpointIndempotent(endpointPath: string, method: HTTPMethod) {
     return false;
 }
 
+interface User {
+    userId: string;
+    firstname: string;
+    username: string;
+}
+
+const defaultUser: User = {
+    userId: 'guest',
+    firstname: 'Guest',
+    username: 'guest'
+}
+
 export {
     authAPI,
     authEndpoints,
-    isAuthEndpointIndempotent
+    isAuthEndpointIndempotent,
+    defaultUser,
+    type User
 }

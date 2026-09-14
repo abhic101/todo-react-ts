@@ -1,6 +1,7 @@
 import { useState, type CSSProperties } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAccountContext } from '@hooks';
+import { useUpdatePassword } from '@/hooks/accountQueryHooks';
+import { StatusCodeMap as ErrCode, accountErrToCode } from '@errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { passwordUpdateSchema, type PasswordFormType as FormType } from '../settings.data'
 import { ModalData } from '../../index.componentTypes';
@@ -13,7 +14,7 @@ interface Props {
 }
 
 function ChangePasswordDialog({changeDialog}: Props) {
-    const { updatePassword } = useAccountContext();
+    const updatePasswordMutation = useUpdatePassword();
     const {
         register,
         handleSubmit,
@@ -25,21 +26,39 @@ function ChangePasswordDialog({changeDialog}: Props) {
     });
     const [httpNotif, setHttpNotif] = useState<string | null>(null);
 
+    function handlePasswordUpdateError(errCode: number) {
+        switch (errCode) {
+            case ErrCode.timeout:
+                setHttpNotif('Server Busy. Please try later');
+                return;
+            case ErrCode.unreachable:
+                setHttpNotif('Failed! Please check your internet.')
+                return;
+            case 401:
+                setHttpNotif('Invalid Password');
+                return;
+            case 403:
+                setHttpNotif('Account Error! Please login again');
+                return;
+            case 409:
+                setHttpNotif('Sorry! Username is taken.');
+                break;
+            default:
+                setHttpNotif('Internal Server Error.');
+        }
+    }
+
     async function onSubmit(data: FormType) {
-        let updateRes: number | undefined;
         setHttpNotif(null);
 
-        updateRes = await updatePassword(data);
-        if (!updateRes) {
-            setHttpNotif('Unknown Error');
-        } else if (updateRes === 200 || updateRes === 201) {
+        try {
+            await updatePasswordMutation.mutateAsync(data);
             setHttpNotif('Password Updated. Please login again');
             await new Promise((resolve) => setTimeout(resolve, 500));
             changeDialog('login');
-        } else if (updateRes === 401) {
-            setHttpNotif('Incorrect Current Password');
-        } else {
-            setHttpNotif('Internal Server Error')
+        } catch (err) {
+            const errCode = accountErrToCode(err as Error);
+            handlePasswordUpdateError(errCode);
         }
     }
 

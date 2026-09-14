@@ -1,8 +1,8 @@
 import { useState, type CSSProperties } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthContext } from '@hooks';
-import { StatusCodeMap as ErrCode } from '@errors';
+import { useSignup, useCheckUsername } from '@/hooks/authQueryHooks';
+import { StatusCodeMap as ErrCode, authErrToCode } from '@errors';
 import { schema, type FormData } from './signup.data';
 import styles from './SignupDialog.v2.module.css';
 import signupLogo from '@assets/signin-logo.png';
@@ -13,7 +13,8 @@ interface Props {
 }
 
 function SignupDialog ({onClose, changeDialog}: Props) {
-    const {signup, checkUsername} = useAuthContext();
+    const signupMutation = useSignup();
+    const checkUsernameMutation = useCheckUsername();
     const [ httpNotif, setHttpNotif ] = useState<string | null>();
     const {
         register, handleSubmit, trigger, setFocus, getValues, formState: {errors, isSubmitting, touchedFields}
@@ -24,6 +25,26 @@ function SignupDialog ({onClose, changeDialog}: Props) {
     const [ usernameAvailability, setUsernameAvailability ] = useState<null | "Username Not Availabe">(null);
     () => {onClose()}
 
+    function handleSignupError (errCode: number) {
+        switch(errCode) {
+            case 409:
+                setFocus('username');
+                setHttpNotif('Username already taken');
+                break;
+            case ErrCode.timeout:
+                setFocus('firstname');
+                setHttpNotif('Server Busy. Please try later');
+                break;
+            case ErrCode.unreachable:
+                setFocus('firstname');
+                setHttpNotif('Signup Failed! Please check your internet');
+                break;
+            default:
+                setFocus('firstname');
+                setHttpNotif('Internal Server Error');
+        }
+    }
+
     /** Submit handler for signup form */
     const onSubmit = async (data: FormData) => {
         if (usernameAvailability) {
@@ -31,30 +52,14 @@ function SignupDialog ({onClose, changeDialog}: Props) {
             return;
         };
         setHttpNotif(null);
-        const statusCode = await signup(data);
-
-        if (statusCode === 201) {
+        try {
+            await signupMutation.mutateAsync(data);
             setHttpNotif('Account Created Successfully');
             await new Promise(resolve=>setTimeout(resolve, 1000));
             changeDialog();
-        } else {
-            switch(statusCode) {
-                case 409:
-                    setFocus('username');
-                    setHttpNotif('Username already taken');
-                    break;
-                case ErrCode.timeout:
-                    setFocus('firstname');
-                    setHttpNotif('Server Busy. Please try later');
-                    break;
-                case ErrCode.unreachable:
-                    setFocus('firstname');
-                    setHttpNotif('Login Failed! Please check your internet');
-                    break;
-                default:
-                    setFocus('firstname');
-                    setHttpNotif('Internal Server Error');
-            }
+        } catch (err) {
+            const errCode = signupMutation.error ? authErrToCode(err as Error): 500;
+            handleSignupError(errCode);
         }
     }
 
@@ -72,13 +77,14 @@ function SignupDialog ({onClose, changeDialog}: Props) {
 
     const usernameAvailabilityCheck = async (username: string) => {
         if (errors.username) return;
-        const resCheckUsername = await checkUsername(username);
-        if (resCheckUsername === 200) {
+        try {
+            await checkUsernameMutation.mutateAsync(username);
             setUsernameAvailability(null);
-        } else if (resCheckUsername === 409) {
-            setUsernameAvailability('Username Not Availabe');
-        } else {
-            setUsernameAvailability(null);
+        } catch (err) {
+            if (authErrToCode(err as Error) === 409)
+                setUsernameAvailability('Username Not Availabe');
+            else
+                setUsernameAvailability(null);
         }
     }
 

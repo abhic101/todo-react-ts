@@ -1,7 +1,7 @@
 import { useState, useEffect, type MouseEvent, useMemo, useRef, type RefObject } from 'react';
-import { useAuthContext } from '@hooks';
 import { ActiveModalRenderer, RenderConfirmDialog, BubbleNotif } from '@components';
-import { StatusCodeMap as ErrCode } from '@errors';
+import { useMe, useLogout, defaultUser } from '@/hooks/authQueryHooks';
+import { StatusCodeMap as ErrCode, authErrToCode } from '@errors';
 import { ModalData } from '../index.componentTypes';
 import { userNavLinks, guestNavLinks, type NavLink} from './navbar.data';
 import { FaExclamationTriangle as WarningIcon } from "react-icons/fa";
@@ -19,7 +19,12 @@ interface Props {
 
 /** Statefull component. Depends on authContext's 'user' state */
 function Navbar({closeNavbarRef, className}: Props) {
-    const {user, logout} = useAuthContext();
+    const {
+        data: user,
+        isSuccess: isUserSuccess,
+        status: userStatus
+    } = useMe();
+    const logoutMutation = useLogout();
     const [currentNavLinks, setCurrentNavLinks] = useState(guestNavLinks);
     const [showConfirm, setShowConfirm] = useState<string | null>(null);
     const [showBubbleNotif, setShowBubbleNotif] = useState(false);
@@ -30,38 +35,50 @@ function Navbar({closeNavbarRef, className}: Props) {
     const [ activeDialog, setActiveDialog ] = useState<AvailableDialogs>(null);
     const bubbleNotifMsg = useRef('');
 
-    // Set which navlinks group to render
+
     useEffect(() => {
-        setShowConfirm(null);
-        if (user?.userId !== 'guest') {
-            setCurrentNavLinks(memoizedUserNavLinks)
-        } else {
+        if (isUserSuccess) {
+            setCurrentNavLinks(memoizedUserNavLinks);
+            }
+        else {
             setCurrentNavLinks(memoizedGuestNavLinks);
         }
-    }, [user])
+    }, [ userStatus ])
+
+    // Logout notif
+    useEffect(() => {
+        if (logoutMutation.isError) {
+            const statusCode = authErrToCode(logoutMutation.error);
+            setLogoutErrorString(statusCode);
+            setShowBubbleNotif(true);
+        }
+        if (logoutMutation.isSuccess) {
+            closeNavbarRef?.current?.();
+        }
+    }, [logoutMutation.isError, logoutMutation.isSuccess])
+
+    function setLogoutErrorString(statusCode: number) {
+        switch (statusCode) {
+            case 401:
+                return;
+            case 403:
+                return;
+            case ErrCode.timeout:
+                bubbleNotifMsg.current = 'Server Busy. Please try later.';
+                break;
+            case ErrCode.unreachable:
+                bubbleNotifMsg.current = 'Failed due to Connection Issue.';
+                break;
+            default:
+                bubbleNotifMsg.current = 'Failed due to Server Issue.';
+        }
+    }
+
 
     async function logoutWrapper() {
-        const statusCode = await logout();
-        if (statusCode === 200) {
-            closeNavbarRef?.current?.();
-            return
-        } else {
-            switch (statusCode) {
-                case 401:
-                    return;
-                case 403:
-                    return;
-                case ErrCode.timeout:
-                    bubbleNotifMsg.current = 'Server Busy. Please try later';
-                    break;
-                case ErrCode.unreachable:
-                    bubbleNotifMsg.current = 'Logout Failed! Please check your internet';
-                    break;
-                default:
-                    bubbleNotifMsg.current = 'Logout Failed due to Server Issue'
-            }
-            setShowBubbleNotif(true);
-        } 
+        try {
+            await logoutMutation.mutateAsync();
+        } catch(err) {}
     }
 
     /**
@@ -90,9 +107,11 @@ function Navbar({closeNavbarRef, className}: Props) {
             <div className={styles['navbar-messages']}>
                 <span className={styles['navbar-message']}>
                     <span className={styles["message-welcome"]}>Welcome,&nbsp;</span>
-                    <span className={styles['message-firstname']}>{user.firstname} !</span>
+                    <span className={styles['message-firstname']}>
+                        {isUserSuccess ? user.firstname : defaultUser.firstname} !
+                        </span>
                 </span>
-                {user.userId==='guest' ? 
+                {!isUserSuccess ? 
                     <span className={`${styles['navbar-message']} ${styles['warning-container']}`}>
                         <span className={styles['warning-icon']}>
                             <WarningIcon />

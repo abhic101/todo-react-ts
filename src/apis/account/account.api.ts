@@ -1,5 +1,6 @@
 import axios from 'axios';
-import type { Endpoint, HTTPMethod} from './apis.types';
+import type { Endpoint, HTTPMethod} from '../apis.types';
+import { SettingsData } from '@/components/index.componentTypes';
 
 const accountAPI = axios.create({
     baseURL: `${import.meta.env.VITE_API_BASE_URL}/account`,
@@ -36,8 +37,17 @@ function isAccountEndpointIndempotent(url: string, method: HTTPMethod) {
     }
 }
 
+type Profile = SettingsData.ProfileFormType;
+type Password = SettingsData.PasswordFormType;
+type Username = SettingsData.UsernameFormType;
 export {
     accountAPI,
     accountEndpoints,
-    isAccountEndpointIndempotent
+    isAccountEndpointIndempotent,
 };
+
+export type {
+    Profile,
+    Password,
+    Username
+}

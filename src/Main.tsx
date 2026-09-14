@@ -6,7 +6,7 @@ import App from './App';
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Root element not found');
 
-if (import.meta.env.VITE_ENV === 'prd') {
+if (import.meta.env.VITE_ENV === 'prod') {
         createRoot(rootElement).render(
                 <App />
         )
