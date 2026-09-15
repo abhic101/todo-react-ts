@@ -38,12 +38,13 @@ function Navbar({closeNavbarRef, className}: Props) {
 
     useEffect(() => {
         if (isUserSuccess) {
-            setCurrentNavLinks(memoizedUserNavLinks);
+            if (user.username !== 'guest') {
+                setCurrentNavLinks(memoizedUserNavLinks);
+                return;
             }
-        else {
-            setCurrentNavLinks(memoizedGuestNavLinks);
         }
-    }, [ userStatus ])
+        setCurrentNavLinks(memoizedGuestNavLinks);
+    }, [ user?.username ])
 
     // Logout notif
     useEffect(() => {
@@ -108,10 +109,10 @@ function Navbar({closeNavbarRef, className}: Props) {
                 <span className={styles['navbar-message']}>
                     <span className={styles["message-welcome"]}>Welcome,&nbsp;</span>
                     <span className={styles['message-firstname']}>
-                        {isUserSuccess ? user.firstname : defaultUser.firstname} !
+                        {user ? user.firstname : 'no-name'} !
                         </span>
                 </span>
-                {!isUserSuccess ? 
+                {!user || user.username === 'guest' ? 
                     <span className={`${styles['navbar-message']} ${styles['warning-container']}`}>
                         <span className={styles['warning-icon']}>
                             <WarningIcon />

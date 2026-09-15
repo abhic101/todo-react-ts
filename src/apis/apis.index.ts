@@ -13,10 +13,6 @@ import {
     type Profile, type Username, type Password
 } from './account/account.api';
 
-import * as TodoQueries from './todo/todo.api.methods';
-import * as AuthQueries from './auth/auth.api.methods';
-import * as AccountQueries from './account/accout.api.methods';
-
 import {isIndempotent} from './api.utils';
 
 import type { HTTPMethod, Endpoint } from './apis.types';
@@ -29,10 +25,7 @@ export {
     authEndpoints,
     todoAPI,
     todoEndpoints,
-    TodoQueries,
-    AuthQueries,
-    defaultUser,
-    AccountQueries
+    defaultUser
 };
 
 // Utils
