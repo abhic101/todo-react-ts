@@ -1,20 +1,22 @@
+import { useRef, useEffect, useState } from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import { TodoQueries, type Task } from '@api';
+import { defaultUser, type Task, type User } from '@api';
+import { TodoFn  } from '@repositories/repository.index'
 
 function useGetAllTask() {
     return useQuery({
         queryKey: ['todos'],
-        queryFn: TodoQueries.getAllTask,
+        queryFn: TodoFn.getAllTask,
         refetchOnWindowFocus: false,
-        retry: false
+        retry: 0
     })
 }
 
 function useAddOneTask() {
-    const queryClient = useQueryClient();
     const controller = new AbortController();
+    const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (task: Task) => TodoQueries.addOneTask(task, controller),
+        mutationFn: (task: Task) => TodoFn.addOneTask(task, controller),
         retry: false,
         onSuccess: (data) => {
             queryClient.setQueryData(['todos'], (oldTodos: Task[]) => [data, ...oldTodos])
@@ -23,10 +25,10 @@ function useAddOneTask() {
 }
 
 function useAddManyTask() {
-    const queryClient = useQueryClient();
     const controller = new AbortController();
+    const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (tasks: Task[]) => TodoQueries.addManyTask(tasks, controller),
+        mutationFn: (tasks: Task[]) => TodoFn.addManyTask(tasks, controller),
         retry: false,
         onSuccess: (data) => {
             queryClient.setQueryData(['todos'], (oldTodos: Task[]) => [...data, ...oldTodos])
@@ -35,10 +37,10 @@ function useAddManyTask() {
 }
 
 function useUpdateOneTask() {
-    const queryClient = useQueryClient();
     const controller = new AbortController();
+    const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (task: Task) => TodoQueries.updateOneTask(task, controller),
+        mutationFn: (task: Task) => TodoFn.updateOneTask(task, controller),
         retry: false,
         onSuccess: (data, task) => {
             queryClient.setQueryData(['todos'], (oldTodos: Task[]) => oldTodos.map((t) => {
@@ -50,10 +52,10 @@ function useUpdateOneTask() {
 }
 
 function useDeleteOneTask() {
-    const queryClient = useQueryClient();
     const controller = new AbortController();
+    const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (task: Task) => TodoQueries.deleteOneTask(task, controller),
+        mutationFn: (task: Task) => TodoFn.deleteOneTask(task, controller),
         retry: false,
         onSuccess: (data, task) => {
             queryClient.setQueryData(['todos'], (oldTodos: Task[]) => oldTodos.filter((t) => t._id !== task._id))
@@ -66,6 +68,9 @@ export {
     useAddOneTask,
     useAddManyTask,
     useUpdateOneTask,
-    useDeleteOneTask,
+    useDeleteOneTask
+};
+
+export {
     type Task
 }

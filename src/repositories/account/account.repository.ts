@@ -1,6 +1,6 @@
 import {isAxiosError} from 'axios';
-import { accountAPI, accountEndpoints as apiMap } from './account.api';
-import type { Profile, Username, Password } from './account.api';
+import { accountAPI, accountEndpoints as apiMap } from '@api';
+import type { Profile, Username, Password } from '@api';
 import { mapAxiosError } from '@errors'; 
 
 export async function getAccount() {

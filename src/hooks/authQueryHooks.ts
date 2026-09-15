@@ -1,11 +1,12 @@
 import {useQuery, useQueryClient, useMutation} from '@tanstack/react-query';
-import { AuthQueries, type User, defaultUser } from '@api';
+import { type User, defaultUser } from '@api';
+import { AuthFn } from '@repositories/repository.index'
 import { SignupData } from '@/components/index.componentTypes';
 
 export function useMe() {
     return useQuery({
         queryKey: ['user'],
-        queryFn: AuthQueries.getMe,
+        queryFn: AuthFn.getMe,
         retry: false,
         staleTime: Infinity,
         refetchOnWindowFocus: false
@@ -15,12 +16,12 @@ export function useMe() {
 export function useLogin() {
     const client = useQueryClient();
     return useMutation({
-        mutationFn: (userData: {username: string, password:string}) => AuthQueries.login(userData),
+        mutationFn: (userData: {username: string, password:string}) => AuthFn.login(userData),
         retry: false,
-        onSuccess: (data) => {
-            client.setQueryData(['user'], data);
-            client.invalidateQueries({queryKey: ['todos']});
+        onSuccess: async (data) => {
             client.invalidateQueries({queryKey: ['account']});
+            client.invalidateQueries({queryKey: ['user']});
+            client.invalidateQueries({queryKey: ['todos']});
         },
     })
 }
@@ -28,23 +29,23 @@ export function useLogin() {
 export function useLogout() {
     const client = useQueryClient();
     return useMutation({
-        mutationFn: () => AuthQueries.logout(),
-        onSuccess: () => {
+        mutationFn: () => AuthFn.logout(),
+        onSuccess: async () => {
             client.invalidateQueries({queryKey: ['user']});
-            client.setQueryData(['todos'], []);
+            client.invalidateQueries({queryKey: ['todos']});
         }
     })
 }
 
 export function useSignup() {
     return useMutation({
-        mutationFn: (signupData: SignupData.FormData) => AuthQueries.signup(signupData)
+        mutationFn: (signupData: SignupData.FormData) => AuthFn.signup(signupData)
     })
 }
 
 export function useCheckUsername() {
     return useMutation({
-        mutationFn: (username: string) => AuthQueries.checkUsername(username)
+        mutationFn: (username: string) => AuthFn.checkUsername(username)
     })
 }
 

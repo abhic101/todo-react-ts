@@ -1,11 +1,12 @@
 import { useRef, useEffect, useState} from 'react';
 import type { CSSProperties, SetStateAction, Dispatch, ChangeEvent, MouseEvent } from 'react';
-import {
-    useGetAllTask,
+import {useGetAllTask,
     useUpdateOneTask,
     useDeleteOneTask,
+    useAddManyTask,
     type Task
-} from '../../../hooks/todoQueryHooks';
+} from '@/hooks/todoQueryHooks';
+import { useMe } from '@/hooks/authQueryHooks';
 import { ActiveModalRenderer, RenderConfirmDialog, Loader, BubbleNotif } from '@components';
 import { todoErrToCode } from '@errors';
 import { ModalData } from '../../index.componentTypes';
@@ -22,9 +23,12 @@ interface Props {
 }
 
 function TaskList({activeDialog, setActiveDialog}: Props) {
+    const {data: user} = useMe();
     const [showBubbleNotif, setShowBubbleNotif] = useState<boolean>(false);
+    const [showSaveListDialog, setShowSaveListDialog] = useState<boolean>(false);
     const bubbleNotifMessage = useRef('');
     const taskRef = useRef<Task>(undefined);
+
     const {
         data: todos,
         isError: isTodoError,
@@ -35,12 +39,23 @@ function TaskList({activeDialog, setActiveDialog}: Props) {
     } = useGetAllTask();
     const updateMutation = useUpdateOneTask();
     const deleteMutation = useDeleteOneTask();
-
+    const addManyMutation = useAddManyTask();
+    const localTodosRef = useRef<Task[]>([]);
     useEffect(() => {
         if (!activeDialog){
             taskRef.current = undefined;
         }
     }, [activeDialog]);
+
+    useEffect(() => {
+        if (!user || user.username === 'guest') return;
+        const localTodos_string = localStorage.getItem('todos');
+        if (!localTodos_string) return;
+        const localTodos: Task[] = JSON.parse(localTodos_string);
+        if (localTodos.length === 0) return;
+        localTodosRef.current = localTodos;
+        setShowSaveListDialog(true);
+    }, [user?.username])
 
     useEffect(() => {
         if (updateMutation.isError) {
@@ -53,8 +68,20 @@ function TaskList({activeDialog, setActiveDialog}: Props) {
             setBubbleNotifMessage(statusCode);
             setShowBubbleNotif(true);
         }
+        if (addManyMutation.isError) {
+            const statusCode = deleteMutation.error ? todoErrToCode(deleteMutation.error): 500;
+            console.error('Tf: ', addManyMutation.error);
+            setBubbleNotifMessage(statusCode);
+            setShowBubbleNotif(true);
+        }
 
-    }, [updateMutation.isError, deleteMutation.isError])
+    }, [updateMutation.isError, deleteMutation.isError, addManyMutation.isError])
+
+    useEffect(() => {
+        if (addManyMutation.isSuccess) {
+            localStorage.removeItem('todos');
+        }
+    }, [addManyMutation.isSuccess])
 
     function markedTaskStyle(task: Task) {
         let attr = {};
@@ -90,23 +117,23 @@ function TaskList({activeDialog, setActiveDialog}: Props) {
 
     async function onToggle (e: ChangeEvent<HTMLInputElement>, task: Task) {
         const newStatus = e.target.checked;
-        updateMutation.mutate({...task, status: newStatus});
+        try {
+            updateMutation.mutate({...task, status: newStatus});
+        } catch(err) {}
     }
 
     async function onDelete(e: MouseEvent<HTMLButtonElement>, task: Task) {
         e.preventDefault();
         deleteMutation.mutate(task);
+
     }
 
-    // async function mergerUnsavedListWrapper() {
-    //     const statusCode = await mergeUnsavedList();
-
-    //     if (statusCode === 200 || statusCode === 201) return;
-    //     else {
-    //         setBubbleNotifMessage(statusCode);
-    //         setShowBubbleNotif(true);
-    //     }
-    // }
+    async function mergerUnsavedListWrapper() {
+        addManyMutation.mutate(localTodosRef.current);
+    }
+    function cancelMerge() {
+        setShowSaveListDialog(false);
+    }
 
     return (
         <div className={styles['task-list-container']}>
@@ -159,11 +186,11 @@ function TaskList({activeDialog, setActiveDialog}: Props) {
                 ) :
                 <></>
             }
-            {/* {showSaveListDialog ? (
+            {showSaveListDialog ? (
                 <RenderConfirmDialog message={"Some unsaved tasks are found in the system. Save them to account?"} onConfirm={mergerUnsavedListWrapper} onClose={cancelMerge} onCancel={cancelMerge} />
                 ) :
                 null
-            } */}
+            }
             {showBubbleNotif && <BubbleNotif message={bubbleNotifMessage.current} onClose={() => {setShowBubbleNotif(false)}}/>}
         </div>
     )
